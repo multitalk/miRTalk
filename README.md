@@ -1,7 +1,5 @@
 # miRTalk
-[![R-build-check](https://github.com/shaoxin0801/miRTalk/actions/workflows/R-build-check.yml/badge.svg)](https://github.com/shaoxin0801/miRTalk/actions/workflows/R-build-check.yml) [![version>4](https://img.shields.io/badge/version-%3E%3D4.0-yellow?logo=Rstudio)](#install) [![dockerhub-container](https://img.shields.io/badge/dockerhub-container-yellowgreen?logo=docker)](https://hub.docker.com/repository/docker/zjufanlab/mirtalk)
-
-
+[![R-build-check](https://github.com/shaoxin0801/miRTalk/actions/workflows/R-build-check.yml/badge.svg)](https://github.com/shaoxin0801/miRTalk/actions/workflows/R-build-check.yml) [![version>4](https://img.shields.io/badge/version-%3E%3D4.0-yellow?logo=Rstudio)](#install) 
 # Install
 
 ```
