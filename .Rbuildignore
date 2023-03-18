@@ -1,0 +1,8 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^script$
+^img$
+^\.github/workflows/R-build-check\.yml$
+^\.Rhistory$
+^\.gitignore$

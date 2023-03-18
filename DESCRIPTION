@@ -1,0 +1,40 @@
+Package: miRTalk
+Type: Package
+Title: Infer cell-cell communications mediated by EV-derived miRNAs
+Depends: R (>= 3.6), doParallel
+Version: 1.0
+Authors@R: 
+    person("Xin", "Shao", , "xin_shao@zju.edu.cn", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-1928-3878"))
+Description: This package is to infer cell-cell communications mediated by EV-derived miRNAs.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Imports: 
+    Seurat,
+    Matrix,
+    foreach,
+    ggplot2,
+    ggrepel,
+    methods,
+    parallel,
+    pheatmap,
+    progress,
+    RColorBrewer,
+    grDevices,
+    reshape2,
+    crayon,
+    utils,
+    correlation,
+    scales,
+    ggraph,
+    igraph,
+    circlize,
+    heatmaply,
+    networkD3
+Suggests: 
+    rmarkdown,
+    knitr,
+    prettydoc
+VignetteBuilder: knitr
