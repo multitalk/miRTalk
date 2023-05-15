@@ -47,9 +47,9 @@ plot_cci_chord <- function(object, celltype = NULL, celltype_color = NULL, miRNA
         }
         clu_col <- celltype_color
     }
+    names(clu_col) <- celltype
     if (is.null(edge_color[1])) {
         link_color <- clu_col
-        names(link_color) <- celltype
     } else {
         if (length(edge_color) != length(celltype)) {
             stop("The length of edge_color must be equal to celltype!")
@@ -98,8 +98,6 @@ plot_cci_chord <- function(object, celltype = NULL, celltype_color = NULL, miRNA
         show_type_new <- "bayes"
     }
     colnames(cci_pair) <- c("from", "to", "value")
-    celltype_factor <- celltype[celltype %in% cci_pair$from]
-    cci_pair$from <- factor(cci_pair$from,levels = celltype_factor)
     if (edge_type == "big.arrow") {
         chordDiagram(x = cci_pair, grid.col = clu_col, col = link_color[cci_pair$from], preAllocateTracks = 1, transparency = 0.25, directional = 1,
             direction.type = c("arrows", "diffHeight"), diffHeight = -0.04, annotationTrack = "grid", link.arr.type = edge_type,
@@ -126,7 +124,7 @@ plot_cci_chord <- function(object, celltype = NULL, celltype_color = NULL, miRNA
 #' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
 #' @param celltype_color Colors for the cell types, whose length must be equal to \code{celltype}
 #' @param edge_color Colors for the edges from the sender cell type, whose length must be equal to \code{celltype}
-#' @param edge_type Types for the edges. \code{"arc"} by default, \code{"link"}, \code{"hive"}
+#' @param edge_type Types for the edges. \code{"fan"} by default, \code{"link"}, \code{"hive"}
 #' @param show_type which type of miRNAs to show, \code{"number"} and \code{"activity"} for sum of inferred miRNAs number and activity, respectively, or \code{"bayes"} for max Bayes probability. Default is \code{"number"}
 #' @param if_show_autocrine Whether to show autocrine. Default is \code{FALSE}
 #' @param edge_alpha Transparency of edge. Default is \code{0.5}
