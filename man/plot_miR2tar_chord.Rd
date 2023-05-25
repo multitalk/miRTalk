@@ -11,12 +11,15 @@ plot_miR2tar_chord(
   celltype_color = NULL,
   miRNA = NULL,
   edge_color = NULL,
-  edge_type = "ellipse",
-  text_size = 0.5
+  edge_type = "circle",
+  show_type = "prob",
+  text_size = 0.5,
+  y_scale = 1,
+  ...
 )
 }
 \arguments{
-\item{object}{miRTalk object after \code{\link{find_cci}}}
+\item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
 \item{celltype_sender}{Name of celltype_sender. One or more cell types}
 
@@ -28,9 +31,15 @@ plot_miR2tar_chord(
 
 \item{edge_color}{Colors for the edges from the sender cell type}
 
-\item{edge_type}{Types for the edges from the sender cell type. Default is \code{"ellipse"}. \code{"big.arrow"} for big arrow}
+\item{edge_type}{Types for the edges from the sender cell type. Default is \code{"circle"}. \code{"big.arrow"} for big arrow, "triangle" for triangle, "ellipse" for ellipse, "curved" for curved. Details see \code{\link[circlize]{chordDiagram}}}
+
+\item{show_type}{which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}}
 
 \item{text_size}{Size of text labels. Default is \code{0.5}}
+
+\item{y_scale}{y_scale to adjust the text. Default is \code{1}}
+
+\item{...}{parameters pass to \code{\link[circlize]{chordDiagram}}, e.g., link.arr.width, link.arr.length, link.arr.col}
 }
 \value{
 Chord plot of EV-derived miRNAs and target genes

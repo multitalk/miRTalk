@@ -9,11 +9,13 @@ plot_miR_heatmap(
   celltype = NULL,
   miRNA = NULL,
   text_size = 10,
-  if_horizontal = TRUE
+  if_horizontal = TRUE,
+  viridis_option = "D",
+  ...
 )
 }
 \arguments{
-\item{object}{miRTalk object after \code{\link{find_cci}}}
+\item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
 \item{celltype}{which cell types to plot. Default is to plot all cell types}
 
@@ -22,6 +24,10 @@ plot_miR_heatmap(
 \item{text_size}{Size of text labels. Default is \code{10}}
 
 \item{if_horizontal}{Whether to plot with the horizontal direction. Default is \code{TRUE}}
+
+\item{viridis_option}{option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".}
+
+\item{...}{parameters pass to \code{\link[heatmaply]{heatmaply}}, e.g., grid_color}
 }
 \value{
 Heatmap plot of inferred miRNA

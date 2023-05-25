@@ -215,71 +215,70 @@
     return(miR2tar)
 }
 
-.get_bayes <- function(miR_gene2tar, sc_data, cell_sender, cell_receiver, pvalue){
-    .get_PHe <- function(x) {
-        x_sender <- x[names(x) == "sender"]
+.get_P <- function(miR_gene2tar, sc_data, cell_sender, cell_receiver, pvalue){
+    .get_PI <- function(x) {
+        x_sender_miR <- x[names(x) == "miR_sender"]
+        x_receiver_miR <- x[names(x) == "miR_reciver"]
         x_receiver <- x[names(x) == "receiver"]
-        x_other <- x[names(x) == "other"]
-        x_pvalue <- x[names(x) == "pvalue"]
-        P_e <- length(x_sender[x_sender > 0])/length(x_sender)
-        P_H <- length(x_receiver[x_receiver < x_other])/length(x_receiver)
-        if (P_H > 0) {
-            x_receiver1 <- x_receiver[x_receiver < x_other]
-            x_sample <- ceiling(length(x_sender) * (1-pvalue))
-            x_PeH <- NULL
-            if (x_sample == 0 | x_sample == length(x_sender)) {
-                p_eH <- length(x_sender[x_sender > 0])/length(x_sender)
-            } else {
-                x_sender_mat <- list()
-                for (i in 1:length(x_receiver1)) {
-                    x_sender_mat[[i]] <- x_sender
-                }
-                x_sender_mat <- as.data.frame(t(as.data.frame(x_sender_mat)))
-                rownames(x_sender_mat) <- 1:nrow(x_sender_mat)
-                x_sender_mat$x_sample <- x_sample
-                x_PeH <- base::apply(X = as.matrix(x_sender_mat), MARGIN = 1, FUN = function(x) {
-                    x_num_sample <- x[length(x)]
-                    x <- x[-length(x)]
-                    x_sub <- sample(x = x, size = as.numeric(x_num_sample), replace = FALSE)
-                    return(length(x_sub[x_sub > 0]))
-                })
-                x_PeH <- as.numeric(sum(x_PeH))
-                p_eH <- x_PeH / (length(x_sender) * length(x_receiver))
+        x_sender_other <- x[names(x) == "other_sender"]
+        x_receiver_other <- x[names(x) == "other_receiver"]
+        p_s <- length(x_sender_miR[x_sender_miR > x_sender_other])/length(x_sender_miR)
+        x_receiver_miR <- x_receiver_miR[which(x_receiver < x_receiver_other)]
+        if (length(x_receiver_miR) > 0) {
+            x_p <- 0
+            for (i in 1:length(x_sender_miR)) {
+                x_p1 <- length(x_receiver_miR[x_receiver_miR < x_sender_miR[i]])
+                x_p <- x_p + x_p1
             }
-            p_He <- p_eH * P_H / P_e
+            p_i <- x_p / (length(x_sender_miR) * length(x_receiver))
         } else {
-            p_He <- 0
+            p_i <- 0
         }
-        return(p_He)
+        p_i <- sqrt(p_s*p_i)
+        return(p_i)
     }
     if (nrow(miR_gene2tar) == 1) {
         # sender
+        miR_gene <- mean(sc_data[miR_gene2tar$gene, colnames(sc_data[,!colnames(sc_data) %in% cell_sender$cell])])
         ndata_sender1 <- sc_data[miR_gene2tar$gene, cell_sender$cell]
-        names(ndata_sender1) <- rep("sender", length(ndata_sender1))
+        names(ndata_sender1) <- rep("miR_sender", length(ndata_sender1))
+        ndata_sender2 <- sc_data[miR_gene2tar$gene, cell_receiver$cell]
+        names(ndata_sender2) <- rep("miR_receiver", length(ndata_sender2))     
+        ndata_sender3 <- ndata_sender2[1:2]
+        ndata_sender3[1] <- as.numeric(miR_gene)
+        ndata_sender3[2] <- pvalue
+        names(ndata_sender3) <- c("other_sender", "pvalue_sender")
         # receiver
-        miR_targene <- mean(sc_data[miR_gene2tar$target_gene, ])
+        miR_targene <- mean(sc_data[miR_gene2tar$target_gene, colnames(sc_data[,!colnames(sc_data) %in% cell_receiver$cell])])
         ndata_receiver1 <- sc_data[miR_gene2tar$target_gene, cell_receiver$cell]
         names(ndata_receiver1) <- rep("receiver", length(ndata_receiver1))
         ndata_receiver2 <- ndata_receiver1[1:2]
         ndata_receiver2[1] <- as.numeric(miR_targene)
         ndata_receiver2[2] <- pvalue
-        names(ndata_receiver2) <- c("other", "pvalue")
+        names(ndata_receiver2) <- c("other_receiver", "pvalue_receiver")
         ndata_sender_receiver <- c(ndata_sender1, ndata_receiver1, ndata_receiver2)
-        miR_gene2tar$bayes <- .get_PHe(ndata_sender_receiver)
+        miR_gene2tar$prob <- .get_PI(ndata_sender_receiver)
     } else {
         # sender
+        miR_gene <- rowMeans(sc_data[miR_gene2tar$gene, colnames(sc_data[,!colnames(sc_data) %in% cell_sender$cell])])
         ndata_sender1 <- sc_data[miR_gene2tar$gene, cell_sender$cell]
-        colnames(ndata_sender1) <- rep("sender", ncol(ndata_sender1))
+        colnames(ndata_sender1) <- rep("miR_sender", ncol(ndata_sender1))
+        ndata_sender2 <- sc_data[miR_gene2tar$gene, cell_receiver$cell]
+        colnames(ndata_sender2) <- rep("miR_reciver", ncol(ndata_sender2))
+        ndata_sender3 <- ndata_sender1[,1:2]
+        ndata_sender3[,1] <- as.numeric(miR_gene)
+        ndata_sender3[,2] <- pvalue
+        colnames(ndata_sender3) <- c("other_sender", "pvalue_sender")
         # receiver
-        miR_targene <- rowMeans(sc_data[miR_gene2tar$target_gene, ])
+        miR_targene <- rowMeans(sc_data[miR_gene2tar$target_gene, colnames(sc_data[,!colnames(sc_data) %in% cell_receiver$cell])])
         ndata_receiver1 <- sc_data[miR_gene2tar$target_gene, cell_receiver$cell]
         colnames(ndata_receiver1) <- rep("receiver", ncol(ndata_receiver1))
         ndata_receiver2 <- ndata_receiver1[,1:2]
         ndata_receiver2[,1] <- as.numeric(miR_targene)
         ndata_receiver2[,2] <- pvalue
-        colnames(ndata_receiver2) <- c("other", "pvalue")
-        ndata_sender_receiver <- cbind(ndata_sender1, ndata_receiver1, ndata_receiver2)
-        miR_gene2tar$bayes <- as.numeric(base::apply(ndata_sender_receiver, 1, FUN = .get_PHe))
+        colnames(ndata_receiver2) <- c("other_receiver", "pvalue_receiver")
+        ndata_sender_receiver <- cbind(ndata_sender1, ndata_sender2, ndata_sender3, ndata_receiver1, ndata_receiver2)
+        miR_gene2tar$prob <- as.numeric(base::apply(ndata_sender_receiver, 1, FUN = .get_PI))
     }
     return(miR_gene2tar)
 }
@@ -293,7 +292,8 @@
     cci_temp <- base::merge(cci_temp, miR_gene)
     cci_temp <- cci_temp[, c(13:14, 3, 1, 15:17, 2, 5:12)]
     colnames(cci_temp)[9] <- "target_gene_activity"
-    cci_temp <- cci_temp[order(-cci_temp$bayes), ]
+    cci_temp <- cci_temp[order(-cci_temp$prob), ]
+    cci_temp$score <- cci_temp$miRNA_activity * (1 - cci_temp$target_gene_activity)
     return(cci_temp)
 }
 
@@ -306,10 +306,10 @@
     x <- rep(x, each = y_len)
     cci_miR_temp <- data.frame(cellpair = cellpair, miRNA = miR_name, x = x, y = y, stringsAsFactors = FALSE)
     cci_miR_temp$miRNA_activity <- 0
-    cci_miR_temp$bayes <- 0
+    cci_miR_temp$prob <- 0
     for (i in 1:nrow(cci)) {
         cci_miR_temp[cci_miR_temp$cellpair == cci$cellpair[i] & cci_miR_temp$miRNA == cci$miRNA[i], ]$miRNA_activity <- cci$miRNA_activity[i]
-        cci_miR_temp[cci_miR_temp$cellpair == cci$cellpair[i] & cci_miR_temp$miRNA == cci$miRNA[i], ]$bayes <- cci$bayes[i]
+        cci_miR_temp[cci_miR_temp$cellpair == cci$cellpair[i] & cci_miR_temp$miRNA == cci$miRNA[i], ]$prob <- cci$prob[i]
     }
     return(cci_miR_temp)
 }
@@ -320,7 +320,7 @@
     cci_res <- data.frame()
     for (i in 1:length(cci_tmp)) {
         cci1 <- cci[cci$pair == cci_tmp[i], ]
-        cci1 <- cci1[cci1$bayes == max(cci1$bayes), ]
+        cci1 <- cci1[cci1$prob == max(cci1$prob), ]
         cci_res <- rbind(cci_res, cci1[1, -5])
     }
     return(cci_res)
@@ -328,6 +328,7 @@
 
 #' @title Show miRTalk object
 #'
+#' @param object miRTalk object
 #' @return miRTalk object
 #' @import Matrix
 #' @importFrom methods show
@@ -335,12 +336,12 @@
 #' @export
 
 setMethod(
-  f = 'show',
-  signature = 'miRTalk',
-  definition = function(object) {
-    cat("An object of class miRTalk", "\n")
-    cci <- obj@cci
-    cat(paste0(nrow(cci), " EV-derived miRNA-target interactions"), "\n")
-    return(invisible(x = NULL))
-  }
+    f = 'show',
+    signature = 'miRTalk',
+    definition = function(object) {
+        cat("An object of class miRTalk", "\n")
+        cci <- object@cci
+        cat(paste0(nrow(cci), " EV-derived miRNA-target interactions"), "\n")
+        return(invisible(x = NULL))
+    }
 )

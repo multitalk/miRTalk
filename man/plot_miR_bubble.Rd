@@ -9,11 +9,12 @@ plot_miR_bubble(
   celltype = NULL,
   miRNA = NULL,
   if_show_autocrine = FALSE,
-  if_horizontal = TRUE
+  if_horizontal = TRUE,
+  viridis_option = "D"
 )
 }
 \arguments{
-\item{object}{miRTalk object after \code{\link{find_cci}}}
+\item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
 \item{celltype}{which cell types to plot. Default is to plot all cell types}
 
@@ -22,9 +23,11 @@ plot_miR_bubble(
 \item{if_show_autocrine}{Whether to show autocrine. Default is \code{FALSE}}
 
 \item{if_horizontal}{Whether to plot with the horizontal direction. Default is \code{TRUE}}
+
+\item{viridis_option}{option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".}
 }
 \value{
-Bubble plot of inferred miRNA
+ggplot2 object for Bubble plot of inferred miRNA
 }
 \description{
 Bubble plot of inferred miRNA from senders top receivers. Rows for cell pairs, and columns for miRNAs by default.

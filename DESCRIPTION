@@ -32,7 +32,8 @@ Imports:
     igraph,
     circlize,
     heatmaply,
-    networkD3
+    networkD3,
+    viridis
 Suggests: 
     rmarkdown,
     knitr,

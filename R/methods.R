@@ -120,17 +120,16 @@ find_hvtg <- function(object, pvalue = 0.05, log2fc = 0.5, min_cell_num = 10, nf
     if (nrow(celltype_meta) > 1) {
         marker_genes <- NULL
         for (i in 1:nrow(celltype_meta)) {
-          marker_genes_tmp  <- .get_markers(sc_data, celltype_meta$celltype[i], celltype_meta[-i, ]$celltype, pvalue, log2fc)
-          marker_genes <- c(marker_genes, marker_genes_tmp)
+            marker_genes_tmp  <- .get_markers(sc_data, celltype_meta$celltype[i], celltype_meta[-i, ]$celltype, pvalue, log2fc)
+            marker_genes <- c(marker_genes, marker_genes_tmp)
         }
         if (!is.null(marker_genes)) {
-          marker_genes <- unique(marker_genes)
+            marker_genes <- unique(marker_genes)
         }
-        var_genes <- var_genes[!var_genes %in% marker_genes]
+        var_genes <- union(var_genes, marker_genes)
     }
     object@data$var_genes <- var_genes
-    sc_data <- object@data$data
-    object@data$data <- .get_dgCMatrix(log2(sc_data+1))
+    object@data$data <- sc_data[["RNA"]]@data
     return(object)
 }
 
@@ -151,7 +150,7 @@ find_hvtg <- function(object, pvalue = 0.05, log2fc = 0.5, min_cell_num = 10, nf
 #' @importFrom correlation correlation
 #' @export
 
-find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resolution = "mature", min_percent = 0.05, if_doParallel = TRUE, use_n_cores = 4) {
+find_miRTalk <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resolution = "mature", min_percent = 0.05, if_doParallel = TRUE, use_n_cores = 4) {
     # check input
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -221,7 +220,7 @@ find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resoluti
         cl <- parallel::makeCluster(n_cores)
         doParallel::registerDoParallel(cl)
         all_res <- foreach::foreach(k = 1:nrow(celltype_pair), .packages = "Matrix", .export = c(".percent_cell", ".get_ndata_receiver",
-            ".number_cell", ".get_percent_cell", ".get_miR_gene_percent", ".get_cci", ".get_bayes")) %dopar% {
+            ".number_cell", ".get_percent_cell", ".get_miR_gene_percent", ".get_cci", ".get_P")) %dopar% {
             cci <- data.frame()
             # celltype_sender
             celltype_sender <- celltype_pair$celltype_sender[k]
@@ -242,26 +241,27 @@ find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resoluti
                 # celltype_receiver
                 celltype_receiver <- celltype_pair$celltype_receiver[k]
                 cell_receiver <- sc_meta[sc_meta$celltype == celltype_receiver, ]
+                # infer miRNA
+                miR_gene <- .get_miR_gene_percent(miR_gene, cell_sender, cell_receiver, sc_data)
+                miR2tar_sub <- miR2tar[miR2tar$gene %in% miR_gene$miR_gene, ]
+                miR_gene <- miR_gene[miR_gene$miR_gene %in% miR2tar_sub$gene,]
+                miR_name <- unique(miR2tar_sub$miRNA)
+                # ndata_receiver
                 ndata_receiver <- sc_data[, cell_receiver$cell]
-                ndata_other <- sc_data[unique(miR2tar$target_gene), !colnames(sc_data) %in% colnames(ndata_receiver)]
+                ndata_other <- sc_data[unique(miR2tar_sub$target_gene), !colnames(sc_data) %in% colnames(ndata_receiver)]
                 ndata_receiver_mean <- .get_ndata_receiver(ndata_receiver)
                 ndata_receiver_mean_median <- stats::median(ndata_receiver_mean$activity)
-                ndata_receiver_mean <- ndata_receiver_mean[unique(miR2tar$target_gene), ]
-                ndata_receiver <- ndata_receiver[unique(miR2tar$target_gene), ]
+                ndata_receiver_mean <- ndata_receiver_mean[unique(miR2tar_sub$target_gene), ]
+                ndata_receiver <- ndata_receiver[unique(miR2tar_sub$target_gene), ]
                 ndata_receiver_mean <- .get_percent_cell(ndata_receiver_mean, ndata_receiver, ndata_other, pvalue)
                 if (min(ndata_receiver_mean$target_gene_percent) < min_percent) {
                     ndata_receiver_mean[ndata_receiver_mean$target_gene_percent < min_percent, ]$sig <- "NO"
                 }
-                # infer miRNA
-                miR_gene <- .get_miR_gene_percent(miR_gene, cell_sender, cell_receiver, sc_data)
-                miR2tar <- miR2tar[miR2tar$gene %in% miR_gene$miR_gene, ]
-                miR_gene <- miR_gene[miR_gene$miR_gene %in% miR2tar$gene,]
-                miR_name <- unique(miR2tar$miRNA)
                 cci_temp <- data.frame()
                 for (i in 1:length(miR_name)) {
-                    miR_gene2tar <- miR2tar[miR2tar$miRNA == miR_name[i], ]
+                    miR_gene2tar <- miR2tar_sub[miR2tar_sub$miRNA == miR_name[i], ]
                     miR_gene2tar <- base::merge(miR_gene2tar, ndata_receiver_mean)
-                    miR_gene2tar <- .get_bayes(miR_gene2tar, sc_data, cell_sender, cell_receiver, pvalue)
+                    miR_gene2tar <- .get_P(miR_gene2tar, sc_data, cell_sender, cell_receiver, pvalue)
                     miR_gene2tar <- miR_gene2tar[miR_gene2tar$sig == "YES", ]
                     if (nrow(miR_gene2tar) > 0) {
                         cci_temp <- rbind(cci_temp, miR_gene2tar)
@@ -276,7 +276,6 @@ find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resoluti
         }
         doParallel::stopImplicitCluster()
         parallel::stopCluster(cl)
-        close(pb)
         cci <- data.frame()
         for (i in 1:length(all_res)) {
             cci_temp <- all_res[[i]]$cci
@@ -297,7 +296,7 @@ find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resoluti
             miR_gene <- data.frame(miR_gene = miR_gene, stringsAsFactors = FALSE)
             ndata_sender <- sc_data[miR_gene$miR_gene, cell_sender$cell]
             if (nrow(miR_gene) == 1) {
-                miR_gene$percent <- .number_cell(ndata_sender)
+                miR_gene$percent <- as.numeric(.number_cell(ndata_sender))
             } else {
                 miR_gene$percent <- as.numeric(apply(ndata_sender, 1, .number_cell))
             }
@@ -310,25 +309,26 @@ find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resoluti
             # celltype_receiver
             celltype_receiver <- celltype_pair$celltype_receiver[k]
             cell_receiver <- sc_meta[sc_meta$celltype == celltype_receiver, ]
+            # infer miRNA
+            miR_gene <- .get_miR_gene_percent(miR_gene, cell_sender, cell_receiver, sc_data)
+            miR2tar_sub <- miR2tar[miR2tar$gene %in% miR_gene$miR_gene, ]
+            miR_gene <- miR_gene[miR_gene$miR_gene %in% miR2tar_sub$gene,]
+            miR_name <- unique(miR2tar_sub$miRNA)
+            # ndata_receiver
             ndata_receiver <- sc_data[, cell_receiver$cell]
-            ndata_other <- sc_data[unique(miR2tar$target_gene), !colnames(sc_data) %in% colnames(ndata_receiver)]
+            ndata_other <- sc_data[unique(miR2tar_sub$target_gene), !colnames(sc_data) %in% colnames(ndata_receiver)]
             ndata_receiver_mean <- .get_ndata_receiver(ndata_receiver)
-            ndata_receiver_mean <- ndata_receiver_mean[unique(miR2tar$target_gene), ]
-            ndata_receiver <- ndata_receiver[unique(miR2tar$target_gene), ]
+            ndata_receiver_mean <- ndata_receiver_mean[unique(miR2tar_sub$target_gene), ]
+            ndata_receiver <- ndata_receiver[unique(miR2tar_sub$target_gene), ]
             ndata_receiver_mean <- .get_percent_cell(ndata_receiver_mean, ndata_receiver, ndata_other, pvalue)
             if (min(ndata_receiver_mean$target_gene_percent) < min_percent) {
                 ndata_receiver_mean[ndata_receiver_mean$target_gene_percent < min_percent, ]$sig <- "NO"
             }
-            # infer miRNA
-            miR_gene <- .get_miR_gene_percent(miR_gene, cell_sender, cell_receiver, sc_data)
-            miR2tar <- miR2tar[miR2tar$gene %in% miR_gene$miR_gene, ]
-            miR_gene <- miR_gene[miR_gene$miR_gene %in% miR2tar$gene,]
-            miR_name <- unique(miR2tar$miRNA)
             cci_temp <- data.frame()
             for (i in 1:length(miR_name)) {
-                miR_gene2tar <- miR2tar[miR2tar$miRNA == miR_name[i], ]
+                miR_gene2tar <- miR2tar_sub[miR2tar_sub$miRNA == miR_name[i], ]
                 miR_gene2tar <- base::merge(miR_gene2tar, ndata_receiver_mean)
-                miR_gene2tar <- .get_bayes(miR_gene2tar, sc_data, cell_sender, cell_receiver, pvalue)
+                miR_gene2tar <- .get_P(miR_gene2tar, sc_data, cell_sender, cell_receiver, pvalue)
                 miR_gene2tar <- miR_gene2tar[miR_gene2tar$sig == "YES", ]
                 if (nrow(miR_gene2tar) > 0) {
                     cci_temp <- rbind(cci_temp, miR_gene2tar)
@@ -346,52 +346,53 @@ find_cci <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, resoluti
     return(object)
 }
 
-#' @title Get miRNA activity
+#' @title Get miRNA-target interactions
 #'
 #' @description Get all miRNAs' activity for a given sender cell type
-#' @param object miRTalk object after \code{\link{find_miRNA}}
-#' @param celltype_sender Name of celltype_sender. One cell type
-#' @param resolution Correct to precursor or mature miRNAs. Use 'precursor' or 'mature'. Default is \code{'mature'}
-#' @return A data.frame containing all miRNA activity.
+#' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param simple Whether to show the simple results. Default is \code{TRUE}
+#' @return A data.frame containing all miRNA-target interactions.
 #' @import Matrix
 #' @export
 
-get_miRNA <- function(object, celltype_sender, resolution = "mature") {
+get_miRTalk_cci <- function(object, simple = TRUE) {
     # check object
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
     }
-    sc_data <- object@data$data
-    sc_meta <- object@meta
-    celltype <- unique(sc_meta$celltype)
-    # check celltype_sender
-    if (!celltype_sender %in% celltype) {
-        stop("Please provide the correct name of celltype_sender!")
+    cci <- object@cci
+    if (nrow(cci) == 0) {
+        stop("No cci found in object!")
     }
-    mir_info <- object@miR
-    if (nrow(mir_info) == 0) {
-        stop("No expressed miRNA found! Please run find_miRNA(). Ignore this if you have run find_miRNA()")
+    if (simple) {
+        cci <- cci[,c(1:4,7:9,16:17)]
+        cci$pair <- paste0(cci$celltype_sender, cci$celltype_receiver, cci$miRNA, cci$target_gene)
+        cci_pair <- as.data.frame(table(cci$pair), stringsAsFactors = F)
+        cci_pair <- cci_pair[cci_pair$Freq > 1,]
+        if (nrow(cci_pair) > 0) {
+            pair_name <- unique(cci_pair$Var1)
+            cci1 <- cci[!cci$pair %in% pair_name,]
+            cci2 <- cci[cci$pair %in% pair_name,]
+            cci3 <- NULL
+            for (i in 1:length(pair_name)) {
+                cci_tmp <- cci2[cci2$pair == pair_name[i], ]
+                cci_tmp$miRNA_activity <- sum(cci_tmp$miRNA_activity)
+                cci_tmp$prob <- max(cci_tmp$prob)
+                cci_tmp$score <- max(cci_tmp$score)
+                mir_genes <- cci_tmp$miR_gene
+                mir_gene <- mir_genes[1]
+                for (j in 2:length(mir_genes)) {
+                    mir_gene <- paste0(mir_gene, ", ", mir_genes[j])
+                }
+                cci_tmp$miR_gene <- mir_gene
+                cci3 <- rbind(cci3, cci_tmp[1,])
+            }
+            cci <- rbind(cci1, cci3)
+        }
+        cci <- cci[ ,-10]
+        cci <- unique(cci)
     }
-    if (resolution == "mature") {
-        miR_gene <- unique(mir_info[,c("miRNA_mature","gene")])
-    } else {
-        miR_gene <- unique(mir_info[,c("miRNA","gene")])
-    }
-    colnames(miR_gene)[2] <- "miR_gene"
-    cell_sender <- sc_meta[sc_meta$celltype == celltype_sender,]
-    ndata_sender <- sc_data[miR_gene$miR_gene, cell_sender$cell]
-    if (nrow(miR_gene) == 1) {
-        miR_gene$percent <- .number_cell(ndata_sender)
-    } else {
-        miR_gene$percent <- as.numeric(apply(ndata_sender, 1, .number_cell))
-    }
-    if (nrow(miR_gene) > 0) {
-        miR_gene[miR_gene$percent > 0, ]$percent <- log10(miR_gene[miR_gene$percent > 0, ]$percent)
-        miR_gene$percent <- miR_gene$percent/max(miR_gene$percent)
-    }
-    miR_gene <- .get_miR_gene_activity(miR_gene, cell_sender, sc_data)
-    colnames(miR_gene)[3] <- "percent_all_cell"
-    return(miR_gene)
+    return(cci)
 }
 
 #' @title Get pathways

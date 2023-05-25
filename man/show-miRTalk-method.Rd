@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{miRTalk}(object)
 }
+\arguments{
+\item{object}{miRTalk object}
+}
 \value{
 miRTalk object
 }

@@ -16,7 +16,7 @@ plot_miR2tar_circle(
 )
 }
 \arguments{
-\item{object}{miRTalk object after \code{\link{find_cci}}}
+\item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
 \item{celltype_sender}{Name of celltype_sender. One cell type}
 
@@ -33,7 +33,7 @@ plot_miR2tar_circle(
 \item{text_size}{Size of text labels. Default is \code{3}}
 }
 \value{
-Circle plot of EV-derived miRNAs and target genes
+ggplot2 object for Circle plot of EV-derived miRNAs and target genes
 }
 \description{
 Chord plot of EV-derived miRNAs and target genes from senders to receivers.

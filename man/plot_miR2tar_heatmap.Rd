@@ -9,12 +9,15 @@ plot_miR2tar_heatmap(
   celltype_sender,
   celltype_receiver,
   miRNA = NULL,
+  show_type = "prob",
   text_size = 5,
-  if_horizontal = TRUE
+  if_horizontal = TRUE,
+  viridis_option = "D",
+  ...
 )
 }
 \arguments{
-\item{object}{miRTalk object after \code{\link{find_cci}}}
+\item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
 \item{celltype_sender}{Name of celltype_sender}
 
@@ -22,9 +25,15 @@ plot_miR2tar_heatmap(
 
 \item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs}
 
+\item{show_type}{which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}}
+
 \item{text_size}{Size of text labels. Default is \code{3}}
 
 \item{if_horizontal}{Whether to plot with the horizontal direction. Default is \code{TRUE}}
+
+\item{viridis_option}{option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".}
+
+\item{...}{parameters pass to \code{\link[heatmaply]{heatmaply}}, e.g., grid_color}
 }
 \value{
 Heatmap plot of EV-derived miRNAs and target genes
