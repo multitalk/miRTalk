@@ -130,20 +130,6 @@
     return(miR_gene)
 }
 
-.get_miR_gene_activity <- function(miR_gene, cell_sender, sc_data) {
-    .number_cell <- function(x) {
-        return(length(x[x > 0]))
-    }
-    ndata_temp <- sc_data[miR_gene$miR_gene, ]
-    if (nrow(miR_gene) == 1) {
-        miR_gene$percent_sender <- .number_cell(ndata_temp[cell_sender$cell])/.number_cell(ndata_temp)
-    } else {
-        miR_gene$percent_sender <- as.numeric(apply(ndata_temp[, cell_sender$cell], 1, .number_cell))/as.numeric(apply(ndata_temp, 1, .number_cell))
-    }
-    miR_gene$miRNA_activity <- sqrt(miR_gene$percent_sender * miR_gene$percent)
-    return(miR_gene)
-}
-
 .get_percent_cell <- function(ndata_receiver_mean, ndata_receiver, ndata_other, pvalue) {
     .percent_cell <- function(x) {
         return(length(x[x > 0])/length(x))

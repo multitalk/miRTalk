@@ -27,7 +27,7 @@ plot_miR_heatmap(
 
 \item{viridis_option}{option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".}
 
-\item{...}{parameters pass to \code{\link[heatmaply]{heatmaply}}, e.g., grid_color}
+\item{...}{parameters pass to \code{\link[heatmaply]{heatmaply}}, e.g., grid_color, grid_width}
 }
 \value{
 Heatmap plot of inferred miRNA

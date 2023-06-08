@@ -2,17 +2,17 @@
 % Please edit documentation in R/methods.R
 \name{get_miRTalk_cci}
 \alias{get_miRTalk_cci}
-\title{Get miRNA activity}
+\title{Get miRNA-target interactions}
 \usage{
 get_miRTalk_cci(object, simple = TRUE)
 }
 \arguments{
-\item{object}{miRTalk object after \code{\link{find_miRNA}}}
+\item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
 \item{simple}{Whether to show the simple results. Default is \code{TRUE}}
 }
 \value{
-A data.frame containing all miRNA activity.
+A data.frame containing all miRNA-target interactions.
 }
 \description{
 Get all miRNAs' activity for a given sender cell type

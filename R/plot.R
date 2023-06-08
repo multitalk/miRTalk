@@ -929,6 +929,7 @@ plot_miR2tar_chord <- function(object, celltype_sender, celltype_receiver, cellt
         link_color <- edge_color
         names(link_color) <- celltype_sender
     }
+    link_color <- link_color[cci$celltype_sender]
     cci$miRNA <- paste0(cci$miRNA, " (", cci$celltype_sender, ")")
     cci$target_gene <- paste0(cci$target_gene, " (", cci$celltype_receiver, ")")
     celltype <- c(cci$celltype_sender, cci$celltype_receiver)

@@ -4,7 +4,7 @@
 \alias{create_miRTalk}
 \title{Create miRTalk object}
 \usage{
-create_miRTalk(sc_data, sc_celltype, species)
+create_miRTalk(sc_data, sc_celltype, species, if_normalize = TRUE)
 }
 \arguments{
 \item{sc_data}{A data.frame or matrix or dgCMatrix containing raw counts of single-cell RNA-seq data. see \code{\link{demo_sc_data}}}
@@ -12,6 +12,8 @@ create_miRTalk(sc_data, sc_celltype, species)
 \item{sc_celltype}{A character containing the cell type of the single-cell RNA-seq data}
 
 \item{species}{A character meaning species of the single-cell transcriptomics data.\code{'Human'}, \code{'Mouse'} or \code{'Rat'}}
+
+\item{if_normalize}{Normalize sc_data with Seurat LogNormalize. Set it \code{FLASE} when sc_data has been normalized.}
 }
 \value{
 miRTalk object

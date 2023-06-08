@@ -4,11 +4,12 @@
 #' @param sc_data A data.frame or matrix or dgCMatrix containing raw counts of single-cell RNA-seq data. see \code{\link{demo_sc_data}}
 #' @param sc_celltype A character containing the cell type of the single-cell RNA-seq data
 #' @param species A character meaning species of the single-cell transcriptomics data.\code{'Human'}, \code{'Mouse'} or \code{'Rat'}
+#' @param if_normalize Normalize sc_data with Seurat LogNormalize. Set it \code{FLASE} when sc_data has been normalized.
 #' @return miRTalk object
-#' @import Matrix methods
+#' @import Matrix methods Seurat
 #' @export
 
-create_miRTalk <- function(sc_data, sc_celltype, species) {
+create_miRTalk <- function(sc_data, sc_celltype, species, if_normalize = TRUE) {
     if (is(sc_data, "data.frame")) {
         sc_data <- .get_dgCMatrix(as.matrix(sc_data))
     }
@@ -35,6 +36,12 @@ create_miRTalk <- function(sc_data, sc_celltype, species) {
     colnames(sc_data) <- .rename_chr(colnames(sc_data))
     sc_meta <- data.frame(cell = colnames(sc_data), celltype = sc_celltype_new, stringsAsFactors = FALSE)
     sc_data <- sc_data[rowSums(sc_data) > 0, ]
+    # if_normalize
+    if (if_normalize) {
+        sc_data <- Seurat::CreateSeuratObject(sc_data)
+        sc_data <- Seurat::NormalizeData(sc_data,verbose = FALSE)
+        sc_data <- sc_data[["RNA"]]@data
+    }
     # generate miRTalk object
     object <- new("miRTalk", data = list(data = sc_data), meta = sc_meta, species = species)
     return(object)
@@ -106,7 +113,6 @@ find_hvtg <- function(object, pvalue = 0.05, log2fc = 0.5, min_cell_num = 10, nf
     sc_data <- object@data$data
     sc_meta <- object@meta
     sc_data <- Seurat::CreateSeuratObject(counts = sc_data)
-    sc_data <- Seurat::NormalizeData(sc_data, verbose = FALSE)
     sc_data <- Seurat::FindVariableFeatures(sc_data, verbose = FALSE, nfeatures = nfeatures)
     var_genes <- sc_data@assays$RNA@var.features
     Seurat::Idents(sc_data) <- sc_meta$celltype
@@ -129,7 +135,6 @@ find_hvtg <- function(object, pvalue = 0.05, log2fc = 0.5, min_cell_num = 10, nf
         var_genes <- union(var_genes, marker_genes)
     }
     object@data$var_genes <- var_genes
-    object@data$data <- sc_data[["RNA"]]@data
     return(object)
 }
 
