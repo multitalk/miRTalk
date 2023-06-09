@@ -1,7 +1,7 @@
 Package: miRTalk
 Type: Package
 Title: Infer cell-cell communications mediated by EV-derived miRNAs
-Depends: R (>=4.0), doParallel
+Depends: R (>=3.6), doParallel
 Version: 1.0
 Authors@R: 
     person("Xin", "Shao", , "xin_shao@zju.edu.cn", role = c("aut", "cre"),
