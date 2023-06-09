@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://github.com/multitalk/miRTalk/actions) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions/runs/5220129987) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://github.com/multitalk/miRTalk/actions) 
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
@@ -84,15 +84,6 @@ An object of class miRTalk
 > plot_miR2tar_circle(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_heatmap(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 ```
-
-
-# Note
-
-
-
-
-
-
 
 # About
 miRTalk was developed by Xin Shao. Should you have any questions, please contact Xin Shao at xin_shao@zju.edu.cn
