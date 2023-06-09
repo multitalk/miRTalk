@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions/runs/5220129987) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](https://github.com/multitalk/miRTalk/blob/main/data/mir2tar.rda) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://github.com/multitalk/miRTalk/actions) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions/runs/5220129987) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](https://github.com/multitalk/miRTalk/blob/main/data/mir2tar.rda) [![miRTalk-tutorial](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html) 
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
@@ -24,7 +24,7 @@ devtools::install_local("/path/to/miRTalk-main.zip")
 ```
 
 # Usage
-miRTalk method consists of three components, wherein the first is to infer the EV-derived miRNA across cells and the highly variable target genes, the second is to infer the cell-cell communication mediated by EV-derived miRNAs and their downstream targets. The third part is to visualize the miRNA-mediated cell-cell communication network and miRNA-target interaction network. Please refer to the tutorial vignette with demo data processing steps. Detailed functions see the [document](https://github.com/multitalk/miRTalk/blob/main/vignettes/miRTalk.pdf).
+miRTalk method consists of three components, wherein the first is to infer the EV-derived miRNA across cells and the highly variable target genes, the second is to infer the cell-cell communication mediated by EV-derived miRNAs and their downstream targets. The third part is to visualize the miRNA-mediated cell-cell communication network and miRNA-target interaction network. Please refer to the __[tutorial vignette](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html)__ with demo data processing steps. Detailed functions see the __[document](https://raw.githack.com/multitalk/miRTalk/main/vignettes/miRTalk.pdf)__.
 
 <img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization.png'>
 
