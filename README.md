@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) 
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
@@ -25,6 +25,8 @@ devtools::install_local("/path/to/miRTalk-main.zip")
 
 # Usage
 miRTalk method consists of three components, wherein the first is to infer the EV-derived miRNA across cells and the highly variable target genes, the second is to infer the cell-cell communication mediated by EV-derived miRNAs and their downstream targets. The third part is to visualize the miRNA-mediated cell-cell communication network and miRNA-target interaction network. Classification and description of miRTalk functions are shown in the [document](https://github.com/multitalk/miRTalk/blob/main/vignettes/miRTalk.pdf).
+
+<img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization.png'>
 
 - ### Inference of EV-derived miRNA and highly variable target genes
 ```
@@ -66,8 +68,6 @@ An object of class miRTalk
 
 - ### Visualization of miRNA-mediated cell-cell communication network
 
-<img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization.png'>
-
 ```
 > plot_miRTalk_chord(object = obj)
 > plot_miRTalk_circle(object = obj)
@@ -76,7 +76,6 @@ An object of class miRTalk
 > plot_miRTalk_sankey(object = obj)
 > plot_miR_bubble(object = obj)
 > plot_miR_heatmap(object = obj)
-
 ```
 
 - ### Visualization of miRNA-target interaction network
@@ -84,7 +83,6 @@ An object of class miRTalk
 > plot_miR2tar_chord(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_circle(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_heatmap(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
-
 ```
 
 
