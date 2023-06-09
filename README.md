@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://github.com/multitalk/miRTalk/actions) 
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
