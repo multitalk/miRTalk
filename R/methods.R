@@ -93,7 +93,7 @@ find_miRNA <- function(object, mir_info) {
 
 #' @title Find highly variable target genes
 #'
-#' @description Find highly variable target genes by excluding the cell-type-specific potential marker genes
+#' @description Find highly variable target genes with DEGs and HVGs
 #' @param object miRTalk object after \code{\link{find_miRNA}}
 #' @param pvalue Cutoff of p value. Default is \code{0.05}
 #' @param log2fc log2 fold change for identifying the highly expressed genes in each cell type. Default is \code{0.5}
@@ -147,7 +147,7 @@ find_hvtg <- function(object, pvalue = 0.05, log2fc = 0.5, min_cell_num = 10, nf
 #' @param pvalue Cutoff of p value. Default is \code{0.05}
 #' @param resolution Correct to precursor or mature miRNAs. Use 'precursor' or 'mature'. Default is \code{'mature'}
 #' @param min_percent Min percent of expressed cells for target genes of miRNA. Default is \code{0.05}
-#' @param if_doParallel Use doParallel. Default is TRUE.
+#' @param if_doParallel Use doParallel. Default is TRUE
 #' @param use_n_cores Number of CPU cores to use. Default is 4
 #' @return miRTalk object containing the inferred cell-cell communications mediated by EV-derived miRNAs
 #' @import Matrix methods progress doParallel parallel foreach
@@ -353,7 +353,7 @@ find_miRTalk <- function(object, mir2tar, min_cell_num = 10, pvalue = 0.05, reso
 
 #' @title Get miRNA-target interactions
 #'
-#' @description Get all miRNAs' activity for a given sender cell type
+#' @description Get simple results of miRNA-target interactions
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
 #' @param simple Whether to show the simple results. Default is \code{TRUE}
 #' @return A data.frame containing all miRNA-target interactions.
