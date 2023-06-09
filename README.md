@@ -64,9 +64,8 @@ An object of class miRTalk
  $ score               : num  0.426 0.48 0.481 0.48 0.481 ...
 ```
 
-- ### Visualization
+- ### Visualization of miRNA-mediated cell-cell communication network
 ```
-# miRNA-mediated cell-cell communication network
 > plot_miRTalk_chord(object = obj)
 > plot_miRTalk_circle(object = obj)
 > plot_miRTalk_circle_simple(object = obj, celltype = "Tumor")
@@ -75,13 +74,17 @@ An object of class miRTalk
 > plot_miR_bubble(object = obj)
 > plot_miR_heatmap(object = obj)
 
-# miRNA-target interaction network
+```
+<img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization1.png'>
+
+- ### Visualization of miRNA-target interaction network
+```
 > plot_miR2tar_chord(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_circle(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_heatmap(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 
 ```
-<img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization.png'>
+<img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization2.png'>
 
 # Note
 
