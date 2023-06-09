@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![version>4](https://img.shields.io/badge/version-%3E%3D4.0-yellow?logo=Rstudio)](#install) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](#Note) 
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
@@ -13,7 +13,7 @@ MicroRNAs are released from cells in extracellular vesicles (EVs), including exo
 ```
 # install devtools and install
 install.packages(pkgs = "devtools"")
-devtools::install_github("ZJUFanLab/miRTalk")
+devtools::install_github("multitalk/miRTalk")
 ```
 
 OR

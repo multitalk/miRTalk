@@ -1,0 +1,12 @@
+citHeader("Please cite Shao X (2023) for using miRTalk")
+
+citEntry(
+  entry    = "Article",
+  title    = "Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data with miRTalk",
+  author = personList(
+             as.person("Xin Shao")
+             ),
+  journal  = "under submission",
+  year     = "2023",
+  )
+)
