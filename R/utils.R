@@ -97,7 +97,7 @@
     marker_genes <- NULL
     for (i in 1:length(celltype_other)) {
         marker_genes_tmp <- Seurat::FindMarkers(sc_data, ident.1 = celltype, ident.2 = celltype_other[i],
-            logfc.threshold = log2fc, only.pos = TRUE, verbose = FALSE)
+            logfc.threshold = log2fc, verbose = FALSE)
         marker_genes_tmp <- marker_genes_tmp[marker_genes_tmp$p_val < pvalue,]
         if (nrow(marker_genes_tmp) > 0) {
             marker_genes <- c(marker_genes, rownames(marker_genes_tmp))

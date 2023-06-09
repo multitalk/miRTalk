@@ -1,5 +1,9 @@
 # miRTalk
-[![R-build-check](https://github.com/shaoxin0801/miRTalk/actions/workflows/R-build-check.yml/badge.svg)](https://github.com/shaoxin0801/miRTalk/actions/workflows/R-build-check.yml) [![version>4](https://img.shields.io/badge/version-%3E%3D4.0-yellow?logo=Rstudio)](#install) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![version>4](https://img.shields.io/badge/version-%3E%3D4.0-yellow?logo=Rstudio)](#install) 
+
+
+
+
 # Install
 
 ```
