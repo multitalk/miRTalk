@@ -33,7 +33,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          install.packages(c("remotes","rcmdcheck","knitr","doParallel","Seurat","foreach","ggplot2","ggrepel","parallel","pheatmap","progress","RColorBrewer","grDevices","reshape2","crayon","utils","correlation","scales","ggraph","igraph","circlize","heatmaply","networkD3","viridis"))
+          install.packages(c("remotes","prettydoc","rcmdcheck","knitr","doParallel","Seurat","foreach","ggplot2","ggrepel","parallel","pheatmap","progress","RColorBrewer","grDevices","reshape2","crayon","utils","correlation","scales","ggraph","igraph","circlize","heatmaply","networkD3","viridis"))
         shell: Rscript {0}
         
       - name: Check
@@ -59,7 +59,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          install.packages(c("remotes","rcmdcheck","knitr","doParallel","Seurat","foreach","ggplot2","ggrepel","parallel","pheatmap","progress","RColorBrewer","grDevices","reshape2","crayon","utils","correlation","scales","ggraph","igraph","circlize","heatmaply","networkD3","viridis"))
+          install.packages(c("remotes","prettydoc","rcmdcheck","knitr","doParallel","Seurat","foreach","ggplot2","ggrepel","parallel","pheatmap","progress","RColorBrewer","grDevices","reshape2","crayon","utils","correlation","scales","ggraph","igraph","circlize","heatmaply","networkD3","viridis"))
         shell: Rscript {0}
         
       - name: Check
