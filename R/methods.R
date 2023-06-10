@@ -403,43 +403,69 @@ get_miRTalk_cci <- function(object, simple = TRUE) {
 #' @title Get pathways
 #'
 #' @description Get pathways for target genes
-#' @param target_genes Character of one or more target genes
+#' @param object miRTalk object after \code{\link{find_miRTalk}}
 #' @param pathways A data.frame of the system data containing gene-gene interactions and pathways from KEGG and Reactome for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_pathways}}
-#' @param species A character meaning species of the target genes.\code{'Human'}, \code{'Mouse'} or \code{'Rat'}
 #' @return Pathways for one or more target genes
 #' @import Matrix
 #' @export
 
-get_pathways <- function(target_genes, pathways, species) {
-    if (!all(c("src", "dest", "pathway", "species") %in% colnames(pathways))) {
-        stop("Please provide a correct pathways data.frame! See demo_pathways()!")
+get_pathways <- function(object, pathways) {
+    # check object
+    if (!is(object, "miRTalk")) {
+        stop("Invalid class for object: must be 'miRTalk'!")
     }
+    cci <- object@cci
+    if (nrow(cci) == 0) {
+        stop("No cci found in object!")
+    }
+    target_genes <- unique(cci$target_gene)
+    species <- object@species
     if (length(species) > 1 | !species %in% c("Human", "Mouse", "Rat")) {
         stop("Please provide a correct species, i.e., 'Human', 'Mouse' or 'Rat'!")
     }
-    pathways <- pathways[pathways$species == species, ]
-    pathways <- pathways[pathways$src %in% target_genes | pathways$dest %in% target_genes, ]
-    return(pathways)
+    pathways_tmp <- pathways[pathways$species == species, ]
+    pathways_tmp <- pathways_tmp[pathways_tmp$src %in% target_genes | pathways_tmp$dest %in% target_genes, ]
+    if (nrow(pathways_tmp) > 0) {
+        pathways_tmp1 <- pathways_tmp[,-2]
+        pathways_tmp2 <- pathways_tmp[,-1]
+        colnames(pathways_tmp1)[1] <- "target_genes"
+        colnames(pathways_tmp2)[1] <- "target_genes"
+        pathways_tmp <- rbind(pathways_tmp1, pathways_tmp2)
+        pathways_tmp <- pathways_tmp[pathways_tmp$target_genes %in% target_genes, ]
+    }
+    return(pathways_tmp)
 }
 
 #' @title Get GO terms
 #'
 #' @description Get GO terms for target genes
-#' @param target_genes Character of one or more target genes
+#' @param object miRTalk object after \code{\link{find_miRTalk}}
 #' @param gene2go A data.frame of the system data containing GO terms for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_gene2go}}
-#' @param species A character meaning species of the target genes.\code{'Human'}, \code{'Mouse'} or \code{'Rat'}
+#' @param if_show_negative Whether to show the results with negative regulation. Default is TRUE.
 #' @return GO terms for one or more target genes
 #' @import Matrix
 #' @export
 
-get_gene2go <- function(target_genes, gene2go, species) {
-    if (!all(c("symbol", "GO_term", "species") %in% colnames(gene2go))) {
-        stop("Please provide a correct gene2go data.frame! See demo_gene2go()!")
+get_gene2go <- function(object, gene2go, if_show_negative = TRUE) {
+    # check object
+    if (!is(object, "miRTalk")) {
+        stop("Invalid class for object: must be 'miRTalk'!")
     }
+    cci <- object@cci
+    if (nrow(cci) == 0) {
+        stop("No cci found in object!")
+    }
+    target_genes <- unique(cci$target_gene)
+    species <- object@species
     if (length(species) > 1 | !species %in% c("Human", "Mouse", "Rat")) {
         stop("Please provide a correct species, i.e., 'Human', 'Mouse' or 'Rat'!")
     }
-    gene2go <- gene2go[gene2go$species == species, ]
-    gene2go <- gene2go[gene2go$symbol %in% target_genes, ]
-    return(gene2go)
+    gene2go_tmp <- gene2go[gene2go$species == species, ]
+    gene2go_tmp <- gene2go_tmp[gene2go_tmp$symbol %in% target_genes, ]
+    if (nrow(gene2go_tmp) > 0) {
+        if (if_show_negative) {
+            gene2go_tmp <- gene2go_tmp[grep(pattern = "negative regulation", x = gene2go_tmp$GO_term), ]
+        }
+    }
+    return(gene2go_tmp)
 }
