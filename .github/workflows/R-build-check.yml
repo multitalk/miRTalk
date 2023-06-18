@@ -25,22 +25,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
         with:
           r-version: ${{ matrix.r-version }}
-      
+
       - name: Install dependencies
         run: |
           install.packages(c("remotes","prettydoc","rcmdcheck","knitr","doParallel","Seurat","foreach","ggplot2","ggrepel","parallel","pheatmap","progress","RColorBrewer","grDevices","reshape2","crayon","utils","correlation","scales","ggraph","igraph","circlize","heatmaply","networkD3","viridis"))
         shell: Rscript {0}
-        
+
       - name: Check
         run: |
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
-  
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env: CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   build-check-on-macos:
     name: build-check on macos
     runs-on: macos-latest
@@ -51,18 +55,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
         with:
           r-version: ${{ matrix.r-version }}
-      
+
       - name: Install dependencies
         run: |
           install.packages(c("remotes","prettydoc","rcmdcheck","knitr","doParallel","Seurat","foreach","ggplot2","ggrepel","parallel","pheatmap","progress","RColorBrewer","grDevices","reshape2","crayon","utils","correlation","scales","ggraph","igraph","circlize","heatmaply","networkD3","viridis"))
         shell: Rscript {0}
-        
+
       - name: Check
         run: |
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env: CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
