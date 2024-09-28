@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^script$
+^data/README\.md$
 ^img$
 ^\.github/workflows/R-build-check\.yml$
 ^\.Rhistory$
