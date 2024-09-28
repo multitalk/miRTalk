@@ -23,6 +23,8 @@ An S4 class containing the data, meta, and results of inferred cell-cell communi
 
 \item{\code{type}}{A character containing the type of miRNA.}
 
+\item{\code{per_test_list}}{Generated background distribution for permutation test.}
+
 \item{\code{cci}}{A data.frame containing the significantly enriched EV-derived miRNAs and their target genes.}
 }}
 

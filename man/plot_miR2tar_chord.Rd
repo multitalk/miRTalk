@@ -6,13 +6,13 @@
 \usage{
 plot_miR2tar_chord(
   object,
+  condition = NULL,
   celltype_sender,
   celltype_receiver,
   celltype_color = NULL,
   miRNA = NULL,
   edge_color = NULL,
   edge_type = "circle",
-  show_type = "prob",
   text_size = 0.5,
   y_scale = 1,
   ...
@@ -21,29 +21,31 @@ plot_miR2tar_chord(
 \arguments{
 \item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
+\item{condition}{which conditions to plot. Default is plot all conditions.}
+
 \item{celltype_sender}{Name of celltype_sender. One or more cell types}
 
 \item{celltype_receiver}{Name of celltype_receiver. One or more cell types}
 
 \item{celltype_color}{Colors for the celltype_sender nodes and celltype_receiver nodes, or use \code{"NO"} to make it simple}
 
-\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs}
+\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs in senders.}
 
 \item{edge_color}{Colors for the edges from the sender cell type}
 
 \item{edge_type}{Types for the edges from the sender cell type. Default is \code{"circle"}. \code{"big.arrow"} for big arrow, "triangle" for triangle, "ellipse" for ellipse, "curved" for curved. Details see \code{\link[circlize]{chordDiagram}}}
-
-\item{show_type}{which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}}
 
 \item{text_size}{Size of text labels. Default is \code{0.5}}
 
 \item{y_scale}{y_scale to adjust the text. Default is \code{1}}
 
 \item{...}{parameters pass to \code{\link[circlize]{chordDiagram}}, e.g., link.arr.width, link.arr.length, link.arr.col}
+
+\item{show_type}{which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}}
 }
 \value{
 Chord plot of EV-derived miRNAs and target genes
 }
 \description{
-Chord plot of EV-derived miRNAs and target genes from senders to receivers.
+Chord plot of EV-derived miRNAs and target genes from senders to receivers with communication score
 }

@@ -5,7 +5,7 @@
 \alias{mir_info}
 \title{mir_info}
 \format{
-An object of class \code{data.frame} with 3934 rows and 5 columns.
+An object of class \code{data.frame} with 3934 rows and 10 columns.
 }
 \source{
 \url{http://bioinfo.life.hust.edu.cn/EVmiRNA#!/}

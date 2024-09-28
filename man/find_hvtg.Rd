@@ -27,5 +27,5 @@ find_hvtg(
 miRTalk object containing highly variable target genes without the cell-type-specific potential marker genes
 }
 \description{
-Find highly variable target genes by excluding the cell-type-specific potential marker genes
+Find highly variable target genes with DEGs and HVGs
 }

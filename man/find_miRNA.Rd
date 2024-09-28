@@ -4,16 +4,49 @@
 \alias{find_miRNA}
 \title{Find expressed miRNAs}
 \usage{
-find_miRNA(object, mir_info)
+find_miRNA(
+  object,
+  mir_info,
+  mir2tar,
+  min_percent = 0.05,
+  database = "miRTarBase",
+  resolution = "mature",
+  regulation = "negative",
+  EXOmotif = NULL,
+  if_use_human_data = FALSE,
+  if_combine = TRUE,
+  gene2gene = NULL,
+  per_num = 1000
+)
 }
 \arguments{
 \item{object}{miRTalk object after \code{\link{create_miRTalk}}}
 
 \item{mir_info}{A data.frame of the system data containing information of EV-derived miRNA of \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir_info}}}
+
+\item{mir2tar}{A data.frame of the system data containing relationship of miRNA and its target genes for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir2tar}}}
+
+\item{min_percent}{Min percent of expressed cells for target genes of miRNA. Default is \code{0.05}}
+
+\item{database}{Which database of miRNA-target interactions to use, "miRTarBase" and/or "TarBase". Default is the "miRTarBase". It can also be "TarBase" or c("miRTarBase", "TarBase")}
+
+\item{resolution}{Correct to precursor or mature miRNAs. Use 'precursor' or 'mature'. Default is \code{'mature'}}
+
+\item{regulation}{Inference of negative or positive regulation. Default is "negative". Set it as "positive" and set database as "TarBase" for inferring positive regulation.}
+
+\item{EXOmotif}{A sequence called EXOmotif to help miRNA secretion in EVs such as "CAUG", "CGGGAG". Please refer to https://doi.org/10.1038/s41586-021-04234-3}
+
+\item{if_use_human_data}{Whether to use homologous human data in mir_info and mir2tar for mouse or rat scRNA-seq data. For human scRNA-seq data, no need to do it. For mouse or rat data, you can set it TRUE.}
+
+\item{if_combine}{Whether to use combined homologous mir_info and mir2tar when if_use_human_data is TRUE. Default is TRUE.}
+
+\item{gene2gene}{A data.frame of the system data containing the gene orthologs among human, mouse, and rat. If if_use_human_data is TRUE, please provide it, like "gene2gene = gene2gene"}
+
+\item{per_num}{Number of permutation test. Default is 1000}
 }
 \value{
 miRTalk object containing the expressed miRNAs
 }
 \description{
-Find expressed miRNAs among all cells
+Find expressed miRNAs among all cells and generate background distribution for permutation test
 }

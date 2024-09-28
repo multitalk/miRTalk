@@ -15,5 +15,5 @@ get_miRTalk_cci(object, simple = TRUE)
 A data.frame containing all miRNA-target interactions.
 }
 \description{
-Get all miRNAs' activity for a given sender cell type
+Get simple results of miRNA-target interactions and specificity.
 }

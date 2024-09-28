@@ -5,7 +5,7 @@
 \alias{mir2tar}
 \title{mir2tar}
 \format{
-An object of class \code{data.frame} with 544329 rows and 8 columns.
+An object of class \code{data.frame} with 6212276 rows and 9 columns.
 }
 \source{
 \url{https://mirtarbase.cuhk.edu.cn/}

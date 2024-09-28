@@ -4,11 +4,11 @@
 #' @source \url{https://www.ncbi.nlm.nih.gov/gene}
 "geneinfo"
 
-#' gene2go
+#' gene2path
 #'
-#' A data.frame containing GO terms, i.e., process, function, and component, of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"} updated on Jan, 02, 2022 for revising count matrix.
+#' A data.frame containing relationship of genes and related pathways, i.e., KEGG, GO_BP, REACTOME, WIKIPATHWAYS of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"} updated on Jan, 02, 2022 for revising count matrix.
 #' @source \url{https://www.ncbi.nlm.nih.gov/gene}
-"gene2go"
+"gene2path"
 
 #' mir_info
 #'
@@ -23,8 +23,20 @@
 #' @source \url{https://mirtarbase.cuhk.edu.cn/}
 "mir2tar"
 
-#' pathways
+#' mir2path
 #'
-#' KEGG pathways of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
-#' @source \url{https://www.genome.jp/kegg/pathway.html}
-"pathways"
+#' A data.frame containing relationship of miRNAs and related pathways, i.e., KEGG, GO_BP, REACTOME, WIKIPATHWAYS of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"} updated on Jan, 02, 2022 for revising count matrix.
+#' @source \url{https://mirtarbase.cuhk.edu.cn/}
+"mir2path"
+
+#' evbiog
+#'
+#' Extracellular vesicle biogenesis genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
+#' @source \url{https://www.gsea-msigdb.org/gsea/msigdb}
+"evbiog"
+
+#' risc
+#'
+#' RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
+#' @source \url{https://doi.org/10.1016/j.molcel.2021.11.026}
+"risc"

@@ -6,10 +6,10 @@
 \usage{
 plot_miR2tar_heatmap(
   object,
+  condition = NULL,
   celltype_sender,
   celltype_receiver,
   miRNA = NULL,
-  show_type = "prob",
   text_size = 5,
   if_horizontal = TRUE,
   viridis_option = "D",
@@ -19,13 +19,13 @@ plot_miR2tar_heatmap(
 \arguments{
 \item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
+\item{condition}{which conditions to plot. Default is plot all conditions.}
+
 \item{celltype_sender}{Name of celltype_sender}
 
 \item{celltype_receiver}{Name of celltype_receiver}
 
-\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs}
-
-\item{show_type}{which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}}
+\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs in senders.}
 
 \item{text_size}{Size of text labels. Default is \code{3}}
 
@@ -39,5 +39,5 @@ plot_miR2tar_heatmap(
 Heatmap plot of EV-derived miRNAs and target genes
 }
 \description{
-Heatmap plot of EV-derived miRNAs and target genes from senders to receivers.
+Heatmap plot of EV-derived miRNAs and target genes from senders to receivers with communication score displayed
 }

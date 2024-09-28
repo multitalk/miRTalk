@@ -33,21 +33,6 @@ demo_geneinfo <- function() {
     return(geneinfo_demo)
 }
 
-#' @title Demo data of gene2go
-#'
-#' @description Demo data of gene2go
-#' @details \code{gene2go} must be a \code{data.frame} object with three columns, namely \code{'symbol'}, \code{'GO_term'}, \code{'species'}.
-#' @export
-#' @examples gene2go_demo <- demo_gene2go()
-
-demo_gene2go <- function() {
-    gene <- c("A1BG", "A1BG", "A1BG", "Zzz3", "Zyx")
-    GO_term <- c("molecular_function", "extracellular region", "extracellular space", "DNA binding", "metal ion binding")
-    species <- c("Human", "Human", "Human", "Mouse", "Rat")
-    gene2go_demo <- data.frame(symbol = gene, GO_term = GO_term, species = species, stringsAsFactors = FALSE)
-    return(gene2go_demo)
-}
-
 #' @title Demo data of mir_info
 #'
 #' @description Demo data of mir_info
@@ -78,21 +63,4 @@ demo_mir2tar <- function() {
     species <- c("Human", "Human", "Mouse", "Rat")
     mir2tar_demo <- data.frame(miRNA = miRNA, miRNA_mature = miRNA_mature, target_gene = target_gene, species = species, stringsAsFactors = FALSE)
     return(mir2tar_demo)
-}
-
-#' @title Demo data of pathways
-#'
-#' @description Demo data of pathways
-#' @details \code{pathways} must be a \code{data.frame} object with four columns, namely \code{'src'}, \code{'dest'}, \code{'pathway'}, \code{'species'}
-#' @export
-#' @examples pathways_demo <- demo_pathways()
-
-demo_pathways <- function() {
-    src <- c("CDKN1A", "CDKN1A", "CDK2", "Akt1", "Tcirg1")
-    dest <- c("CDK2", "CDK4", "TP53", "Atf2", "Ppa1")
-    pathway <- c("p53 signaling pathway", "p53 signaling pathway", "p53 signaling pathway",
-                 "PI3K-Akt signaling pathway", "Oxidative phosphorylation")
-    species <- c("Human", "Human", "Human", "Mouse", "Rat")
-    pathways_demo <- data.frame(src = src, dest = dest, pathway = pathway, species = species, stringsAsFactors = FALSE)
-    return(pathways_demo)
 }

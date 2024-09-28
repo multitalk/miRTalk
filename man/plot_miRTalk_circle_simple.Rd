@@ -6,6 +6,7 @@
 \usage{
 plot_miRTalk_circle_simple(
   object,
+  condition = NULL,
   celltype,
   celltype_dir = "sender",
   miRNA = NULL,
@@ -22,11 +23,13 @@ plot_miRTalk_circle_simple(
 \arguments{
 \item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
+\item{condition}{which conditions to plot. Default is plot all conditions.}
+
 \item{celltype}{which cell types to plot. one or more cell types}
 
 \item{celltype_dir}{which direction to plot, \code{"sender"} or \code{"receiver"}. Default is as \code{"sender"}.}
 
-\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs}
+\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs in senders.}
 
 \item{celltype_color}{Colors for the cell types, whose length must be equal to \code{celltype}}
 
@@ -34,7 +37,7 @@ plot_miRTalk_circle_simple(
 
 \item{edge_type}{Types for the edges. \code{"fan"} by default, \code{"link"}, \code{"hive"}}
 
-\item{show_type}{which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}}
+\item{show_type}{which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}}
 
 \item{if_show_autocrine}{Whether to show autocrine. Default is \code{FALSE}}
 
@@ -48,5 +51,5 @@ plot_miRTalk_circle_simple(
 ggplot2 object for Circle plot of cell-cell communications mediated by EV-derived miRNA
 }
 \description{
-Circle plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability by retaining all cell type nodes
+Circle plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score by retaining all cell type nodes
 }

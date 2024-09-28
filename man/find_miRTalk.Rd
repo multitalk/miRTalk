@@ -6,11 +6,12 @@
 \usage{
 find_miRTalk(
   object,
-  mir2tar,
   min_cell_num = 10,
-  pvalue = 0.05,
-  resolution = "mature",
   min_percent = 0.05,
+  pvalue = 0.05,
+  per_num = 1000,
+  if_filter_miRNA = FALSE,
+  if_consider_condition = TRUE,
   if_doParallel = TRUE,
   use_n_cores = 4
 )
@@ -18,17 +19,17 @@ find_miRTalk(
 \arguments{
 \item{object}{miRTalk object after \code{\link{create_miRTalk}}}
 
-\item{mir2tar}{A data.frame of the system data containing relationship of miRNA and its target genes for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir2tar}}}
-
 \item{min_cell_num}{Min cell number for each cell type and expressed miRNA. Default is \code{10}}
-
-\item{pvalue}{Cutoff of p value. Default is \code{0.05}}
-
-\item{resolution}{Correct to precursor or mature miRNAs. Use 'precursor' or 'mature'. Default is \code{'mature'}}
 
 \item{min_percent}{Min percent of expressed cells for target genes of miRNA. Default is \code{0.05}}
 
-\item{if_doParallel}{Use doParallel. Default is TRUE.}
+\item{pvalue}{Cutoff of p value. Default is \code{0.05}}
+
+\item{if_filter_miRNA}{Whether to filter the significantly highly expressed miRNAs. Default is FALSE}
+
+\item{if_consider_condition}{Whether to infer for each condition. Default is TRUE}
+
+\item{if_doParallel}{Use doParallel. Default is TRUE}
 
 \item{use_n_cores}{Number of CPU cores to use. Default is 4}
 }

@@ -1,13 +1,14 @@
 #' @title Chord plot of cell-cell communications
 #'
-#' @description Chord plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability
+#' @description Chord plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
-#' @param celltype which cell types to plot by order. Default is to plot all cell types
+#' @param condition which conditions to plot. Default is plot all conditions.
+#' @param celltype which cell types to plot by order. Default is to plot all cell types.
 #' @param celltype_color Colors for the cell types, whose length must be equal to \code{celltype}
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param edge_color Colors for the edges from the sender cell type, whose length must be equal to \code{celltype}
 #' @param edge_type Types for the edges from the sender cell type. Default is \code{"big.arrow"}. \code{"ellipse"} for ellipse, "triangle" for triangle, "curved" for curved. Details see \code{\link[circlize]{chordDiagram}}
-#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}
+#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}
 #' @param if_show_autocrine Whether to show autocrine. Default is \code{FALSE}
 #' @param text_size Size of text labels. Default is \code{1.5}
 #' @param y_scale y_scale to adjust the text. Default is \code{0.1}
@@ -18,7 +19,7 @@
 #' @return Chord plot of cell-cell communications mediated by EV-derived miRNA
 #' @export
 
-plot_miRTalk_chord <- function(object, celltype = NULL, celltype_color = NULL, miRNA = NULL, edge_color = NULL, edge_type = "big.arrow", show_type = "number", if_show_autocrine = FALSE, text_size = 1.5, y_scale = 0.1, ...) {
+plot_miRTalk_chord <- function(object, condition = NULL, celltype = NULL, celltype_color = NULL, miRNA = NULL, edge_color = NULL, edge_type = "big.arrow", show_type = "number", if_show_autocrine = FALSE, text_size = 1.5, y_scale = 0.1, ...) {
     # check input
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -27,18 +28,28 @@ plot_miRTalk_chord <- function(object, celltype = NULL, celltype_color = NULL, m
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     celltype_raw <- unique(c(cci$celltype_sender, cci$celltype_receiver))
     if (is.null(celltype[1])) {
         celltype <- celltype_raw
     } else {
         if (!all(celltype %in% celltype_raw)) {
-            stop("Please input the right celltype name!")
+            print(celltype_raw)
+            stop("Please input the right celltype name as shown above!")
         }
         cci <- cci[cci$celltype_sender %in% celltype & cci$celltype_receiver %in% celltype, ]
     }
     if (nrow(cci) == 0) {
         stop("No cci found for these cell types!")
     }
+    celltype <- celltype[order(celltype)]
     # color
     if (is.null(celltype_color[1])) {
         clu_col <- scales::hue_pal()(length(celltype))
@@ -83,13 +94,13 @@ plot_miRTalk_chord <- function(object, celltype = NULL, celltype_color = NULL, m
         }
         show_type_new <- "number"
     }
-    if (show_type == "activity") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "miRNA_activity")])
+    if (show_type == "EVmiR_score") {
+        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "EVmiR_score")])
         cci_pair$value <- 0
         for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$miRNA_activity)
+            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$EVmiR_score)
         }
-        show_type_new <- "activity"
+        show_type_new <- "EVmiR_score"
     }
     if (show_type == "score") {
         cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "score")])
@@ -98,14 +109,6 @@ plot_miRTalk_chord <- function(object, celltype = NULL, celltype_color = NULL, m
             cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$score)
         }
         show_type_new <- "score"
-    }
-    if (show_type == "prob") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "prob")])
-        cci_pair$value <- 0
-        for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- max(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$prob)
-        }
-        show_type_new <- "prob"
     }
     colnames(cci_pair) <- c("from", "to", "value")
     chordDiagram(x = cci_pair, grid.col = clu_col[celltype], col = link_color[cci_pair$from], preAllocateTracks = 1, transparency = 0.25, directional = 1,
@@ -121,14 +124,15 @@ plot_miRTalk_chord <- function(object, celltype = NULL, celltype_color = NULL, m
 
 #' @title Circle plot of cell-cell communications
 #'
-#' @description Circle plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability
+#' @description Circle plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
-#' @param celltype which cell types to plot. Default is to plot all cell types
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
+#' @param condition which conditions to plot. Default is plot all conditions.
+#' @param celltype which cell types to plot. Default is to plot all cell types.
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param celltype_color Colors for the cell types, whose length must be equal to \code{celltype}
 #' @param edge_color Colors for the edges from the sender cell type, whose length must be equal to \code{celltype}
 #' @param edge_type Types for the edges. \code{"fan"} by default, \code{"link"}, \code{"hive"}
-#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}
+#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}
 #' @param if_show_autocrine Whether to show autocrine. Default is \code{FALSE}
 #' @param edge_alpha Transparency of edge. Default is \code{0.5}
 #' @param node_size Size of node. Default is \code{10}
@@ -139,7 +143,7 @@ plot_miRTalk_chord <- function(object, celltype = NULL, celltype_color = NULL, m
 #' @return ggplot2 object for Circle plot of cell-cell communications mediated by EV-derived miRNA
 #' @export
 
-plot_miRTalk_circle <- function(object, celltype = NULL, miRNA = NULL, celltype_color = NULL, edge_color = NULL, edge_type = "fan",
+plot_miRTalk_circle <- function(object, condition = NULL, celltype = NULL, miRNA = NULL, celltype_color = NULL, edge_color = NULL, edge_type = "fan",
     show_type = "number", if_show_autocrine = FALSE, edge_alpha = 0.5, node_size = 10, text_size = 5) {
     # check input
     if (!is(object, "miRTalk")) {
@@ -149,18 +153,28 @@ plot_miRTalk_circle <- function(object, celltype = NULL, miRNA = NULL, celltype_
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     celltype_raw <- unique(c(cci$celltype_sender, cci$celltype_receiver))
     if (is.null(celltype[1])) {
         celltype <- celltype_raw
     } else {
         if (!all(celltype %in% celltype_raw)) {
-            stop("Please input the right celltype name!")
+            print(celltype_raw)
+            stop("Please input the right celltype name as shown above!")
         }
         cci <- cci[cci$celltype_sender %in% celltype & cci$celltype_receiver %in% celltype, ]
     }
     if (nrow(cci) == 0) {
         stop("No cci found for these cell types!")
     }
+    celltype <- celltype[order(celltype)]
     # color
     if (is.null(celltype_color[1])) {
         clu_col <- scales::hue_pal()(length(celltype))
@@ -205,13 +219,13 @@ plot_miRTalk_circle <- function(object, celltype = NULL, miRNA = NULL, celltype_
         }
         show_type_new <- "number"
     }
-    if (show_type == "activity") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "miRNA_activity")])
+    if (show_type == "EVmiR_score") {
+        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "EVmiR_score")])
         cci_pair$value <- 0
         for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$miRNA_activity)
+            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$EVmiR_score)
         }
-        show_type_new <- "activity"
+        show_type_new <- "EVmiR_score"
     }
     if (show_type == "score") {
         cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "score")])
@@ -220,14 +234,6 @@ plot_miRTalk_circle <- function(object, celltype = NULL, miRNA = NULL, celltype_
             cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$score)
         }
         show_type_new <- "score"
-    }
-    if (show_type == "prob") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "prob")])
-        cci_pair$value <- 0
-        for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- max(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$prob)
-        }
-        show_type_new <- "prob"
     }
     colnames(cci_pair) <- c("from", "to", "value")
     cci_pair$sender <- as.character(cci_pair$from)
@@ -269,15 +275,16 @@ plot_miRTalk_circle <- function(object, celltype = NULL, miRNA = NULL, celltype_
 
 #' @title Circle plot of cell-cell communications by retaining all cell type nodes
 #'
-#' @description Circle plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability by retaining all cell type nodes
+#' @description Circle plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score by retaining all cell type nodes
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype which cell types to plot. one or more cell types
 #' @param celltype_dir which direction to plot, \code{"sender"} or \code{"receiver"}. Default is as \code{"sender"}.
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param celltype_color Colors for the cell types, whose length must be equal to \code{celltype}
 #' @param edge_color Colors for the edges from the sender cell type, whose length must be equal to \code{celltype}
 #' @param edge_type Types for the edges. \code{"fan"} by default, \code{"link"}, \code{"hive"}
-#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}
+#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}
 #' @param if_show_autocrine Whether to show autocrine. Default is \code{FALSE}
 #' @param edge_alpha Transparency of edge. Default is \code{0.5}
 #' @param node_size Size of node. Default is \code{10}
@@ -288,7 +295,7 @@ plot_miRTalk_circle <- function(object, celltype = NULL, miRNA = NULL, celltype_
 #' @return ggplot2 object for Circle plot of cell-cell communications mediated by EV-derived miRNA
 #' @export
 
-plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender", miRNA = NULL, celltype_color = NULL, edge_color = NULL, edge_type = "fan",
+plot_miRTalk_circle_simple <- function(object, condition = NULL, celltype, celltype_dir = "sender", miRNA = NULL, celltype_color = NULL, edge_color = NULL, edge_type = "fan",
     show_type = "number", if_show_autocrine = FALSE, edge_alpha = 0.5, node_size = 10, text_size = 5) {
     # check input
     if (!is(object, "miRTalk")) {
@@ -298,12 +305,21 @@ plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender"
     if (nrow(cci) == 0) {
       stop("No cci found in object!")
     }
-    celltype_raw <- unique(c(cci$celltype_sender, cci$celltype_receiver))  
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
+    celltype_raw <- unique(c(cci$celltype_sender, cci$celltype_receiver))
     if (is.null(celltype[1])) {
         stop("Please input the celltype!")
     } else {
         if (!all(celltype %in% celltype_raw)) {
-            stop("Please input the right celltype name!")
+            print(celltype_raw)
+            stop("Please input the right celltype name as shown above!")
         }
         if (celltype_dir == "sender") {
             cci <- cci[cci$celltype_sender %in% celltype, ]
@@ -314,6 +330,7 @@ plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender"
     if (nrow(cci) == 0) {
         stop("No cci found for these cell types!")
     }
+    celltype_raw <- celltype_raw[order(celltype_raw)]
     # color
     if (is.null(celltype_color[1])) {
         clu_col <- scales::hue_pal()(length(celltype_raw))
@@ -358,13 +375,13 @@ plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender"
         }
         show_type_new <- "number"
     }
-    if (show_type == "activity") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "miRNA_activity")])
+    if (show_type == "EVmiR_score") {
+        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "EVmiR_score")])
         cci_pair$value <- 0
         for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$miRNA_activity)
+            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$EVmiR_score)
         }
-        show_type_new <- "activity"
+        show_type_new <- "EVmiR_score"
     }
     if (show_type == "score") {
         cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "score")])
@@ -373,14 +390,6 @@ plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender"
             cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$score)
         }
         show_type_new <- "score"
-    }
-    if (show_type == "prob") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "prob")])
-        cci_pair$value <- 0
-        for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- max(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$prob)
-        }
-        show_type_new <- "prob"
     }
     colnames(cci_pair) <- c("from", "to", "value")
     cci_pair$sender <- as.character(cci_pair$from)
@@ -422,13 +431,14 @@ plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender"
 
 #' @title Sankey plot of cell-cell communications
 #'
-#' @description Sankey plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability
+#' @description Sankey plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype which cell types to plot. Default is to plot all cell types
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param celltype_color Colors for the cell types, whose length must be equal to \code{celltype}
 #' @param edge_color Colors for the edges from the sender cell type, whose length must be equal to \code{celltype}, Or use \code{"NO"} to cancel it
-#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}
+#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}
 #' @param if_show_autocrine Whether to show autocrine. Default is \code{FALSE}
 #' @param edge_alpha Transparency of edge. Default is \code{0.5}
 #' @param node_size Size of node. Default is \code{40}
@@ -440,7 +450,7 @@ plot_miRTalk_circle_simple <- function(object, celltype, celltype_dir = "sender"
 #' @return Sankey plot of cell-cell communications mediated by EV-derived miRNA
 #' @export
 
-plot_miRTalk_sankey <- function(object, celltype = NULL, miRNA = NULL, celltype_color = NULL, edge_color = NULL, show_type = "number", if_show_autocrine = FALSE,
+plot_miRTalk_sankey <- function(object, condition = NULL, celltype = NULL, miRNA = NULL, celltype_color = NULL, edge_color = NULL, show_type = "number", if_show_autocrine = FALSE,
     edge_alpha = 0.5, node_size = 40, text_size = 15, node_pad = 20, ...) {
     # check input
     if (!is(object, "miRTalk")) {
@@ -450,18 +460,28 @@ plot_miRTalk_sankey <- function(object, celltype = NULL, miRNA = NULL, celltype_
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     celltype_raw <- unique(c(cci$celltype_sender, cci$celltype_receiver))
     if (is.null(celltype[1])) {
         celltype <- celltype_raw
     } else {
         if (!all(celltype %in% celltype_raw)) {
-            stop("Please input the right celltype name!")
+            print(celltype_raw)
+            stop("Please input the right celltype name as shown above!")
         }
         cci <- cci[cci$celltype_sender %in% celltype & cci$celltype_receiver %in% celltype, ]
     }
     if (nrow(cci) == 0) {
         stop("No cci found for these cell types!")
     }
+    celltype <- celltype[order(celltype)]
     # color
     if (is.null(celltype_color[1])) {
         clu_col <- scales::hue_pal()(length(celltype))
@@ -515,13 +535,13 @@ plot_miRTalk_sankey <- function(object, celltype = NULL, miRNA = NULL, celltype_
         }
         show_type_new <- "number"
     }
-    if (show_type == "activity") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "miRNA_activity")])
+    if (show_type == "EVmiR_score") {
+        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "EVmiR_score")])
         cci_pair$value <- 0
         for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$miRNA_activity)
+            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$EVmiR_score)
         }
-        show_type_new <- "activity"
+        show_type_new <- "EVmiR_score"
     }
     if (show_type == "score") {
         cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "score")])
@@ -530,14 +550,6 @@ plot_miRTalk_sankey <- function(object, celltype = NULL, miRNA = NULL, celltype_
             cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$score)
         }
         show_type_new <- "score"
-    }
-    if (show_type == "prob") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "prob")])
-        cci_pair$value <- 0
-        for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- max(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$prob)
-        }
-        show_type_new <- "prob"
     }
     colnames(cci_pair) <- c("from", "to", "value")
     cci_pair$signal <- cci_pair$from
@@ -597,11 +609,12 @@ plot_miRTalk_sankey <- function(object, celltype = NULL, miRNA = NULL, celltype_
 
 #' @title Heatmap plot of cell-cell communications
 #'
-#' @description Heatmap plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability
+#' @description Heatmap plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype which cell types to plot by order. Default is to plot all cell types
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
-#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
+#' @param show_type which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}
 #' @param text_size Size of text labels. Default is \code{10}
 #' @param viridis_option option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".
 #' @param ... parameters pass to \code{\link[heatmaply]{heatmaply}}, e.g., grid_color, grid_width
@@ -609,7 +622,7 @@ plot_miRTalk_sankey <- function(object, celltype = NULL, miRNA = NULL, celltype_
 #' @return Heatmap plot of cell-cell communications mediated by EV-derived miRNA
 #' @export
 
-plot_miRTalk_heatmap <- function(object, celltype = NULL, miRNA = NULL, show_type = "number", text_size = 10, viridis_option = "D", ...) {
+plot_miRTalk_heatmap <- function(object, condition = NULL, celltype = NULL, miRNA = NULL, show_type = "number", text_size = 10, viridis_option = "D", ...) {
     # check input
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -618,15 +631,25 @@ plot_miRTalk_heatmap <- function(object, celltype = NULL, miRNA = NULL, show_typ
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     celltype_raw <- unique(c(cci$celltype_sender, cci$celltype_receiver))
     if (is.null(celltype[1])) {
         celltype <- celltype_raw
     } else {
         if (!all(celltype %in% celltype_raw)) {
-            stop("Please input the right celltype name!")
+            print(celltype_raw)
+            stop("Please input the right celltype name as shown above!")
         }
         cci <- cci[cci$celltype_sender %in% celltype & cci$celltype_receiver %in% celltype, ]
     }
+    celltype <- celltype[order(celltype)]
     if (nrow(cci) == 0) {
         stop("No cci found for these cell types!")
     }
@@ -652,13 +675,13 @@ plot_miRTalk_heatmap <- function(object, celltype = NULL, miRNA = NULL, show_typ
         }
         show_type_new <- "number"
     }
-    if (show_type == "activity") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "miRNA_activity")])
+    if (show_type == "EVmiR_score") {
+        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "EVmiR_score")])
         cci_pair$value <- 0
         for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$miRNA_activity)
+            cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$EVmiR_score)
         }
-        show_type_new <- "activity"
+        show_type_new <- "EVmiR_score"
     }
     if (show_type == "score") {
         cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "score")])
@@ -667,14 +690,6 @@ plot_miRTalk_heatmap <- function(object, celltype = NULL, miRNA = NULL, show_typ
             cci_pair$value[i] <- sum(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$score)
         }
         show_type_new <- "score"
-    }
-    if (show_type == "prob") {
-        cci <- unique(cci[, c("celltype_sender", "celltype_receiver", "prob")])
-        cci_pair$value <- 0
-        for (i in 1:nrow(cci_pair)) {
-            cci_pair$value[i] <- max(cci[cci$celltype_sender == cci_pair$celltype_sender[i] & cci$celltype_receiver == cci_pair$celltype_receiver[i], ]$prob)
-        }
-        show_type_new <- "prob"
     }
     colnames(cci_pair) <- c("sender", "receiver", "value")
     cci_pair <- reshape2::dcast(data = cci_pair, formula = sender ~ receiver, value.var = "value", fill = 0)
@@ -690,8 +705,9 @@ plot_miRTalk_heatmap <- function(object, celltype = NULL, miRNA = NULL, show_typ
 #'
 #' @description heatmap plot of inferred miRNA for each sender. Rows for cell types, and columns for miRNAs by default
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype which cell types to plot. Default is to plot all cell types
-#' @param miRNA which miRNAs to plot. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to plot. Default is to plot all inferred miRNAs in senders.
 #' @param text_size Size of text labels. Default is \code{10}
 #' @param if_horizontal Whether to plot with the horizontal direction. Default is \code{TRUE}
 #' @param viridis_option option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".
@@ -701,7 +717,7 @@ plot_miRTalk_heatmap <- function(object, celltype = NULL, miRNA = NULL, show_typ
 #' @return Heatmap plot of inferred miRNA
 #' @export
 
-plot_miR_heatmap <- function(object, celltype = NULL, miRNA = NULL, text_size = 10, if_horizontal = TRUE, viridis_option = "D", ...) {
+plot_miR_heatmap <- function(object, condition = NULL, celltype = NULL, miRNA = NULL, text_size = 10, if_horizontal = TRUE, viridis_option = "D", ...) {
     # check input
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -710,11 +726,20 @@ plot_miR_heatmap <- function(object, celltype = NULL, miRNA = NULL, text_size = 
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     celltype_sender <- unique(cci$celltype_sender)
     miR_name <- unique(cci$miRNA)
     if (!is.null(celltype[1])) {
-        if (all(celltype %in% celltype_sender)) {
-            stop("Please input the right celltype name!")
+        if (!all(celltype %in% celltype_sender)) {
+            print(celltype_sender)
+            stop("Please input the right celltype name as shown above!")
         }
         cci <- cci[cci$celltype_sender %in% celltype, ]
     }
@@ -724,11 +749,11 @@ plot_miR_heatmap <- function(object, celltype = NULL, miRNA = NULL, text_size = 
         }
         cci <- cci[cci$miRNA %in% miRNA, ]
     }
-    cci <- unique(cci[, c("celltype_sender", "miRNA", "miRNA_activity")])
+    cci <- unique(cci[, c("celltype_sender", "miRNA", "EVmiR_score")])
     if (length(unique(cci$celltype_sender)) < 2 | length(unique(cci$miRNA)) < 2) {
         stop("Limited celltype_sender and miRNA to plot!")
     }
-    cci <- reshape2::dcast(data = cci, formula = celltype_sender ~ miRNA, value.var = "miRNA_activity", fill = 0)
+    cci <- reshape2::dcast(data = cci, formula = celltype_sender ~ miRNA, fun.aggregate = mean, value.var = "EVmiR_score", fill = 0)
     rownames(cci) <- cci$celltype_sender
     cci <- cci[, -1]
     if (!if_horizontal) {
@@ -736,13 +761,80 @@ plot_miR_heatmap <- function(object, celltype = NULL, miRNA = NULL, text_size = 
     }
     heat_col <- viridis::viridis(n = 256, alpha = 1, begin = 0, end = 1, option = viridis_option)
     if(if_horizontal) {
-        heatmaply::heatmaply(x = as.matrix(cci), colors = heat_col, dendrogram = "none", xlab = "miRNA", ylab = "Senders", main = "miRNA activity in senders", margins = c(60,100,40,20),
+        heatmaply::heatmaply(x = as.matrix(cci), colors = heat_col, dendrogram = "none", xlab = "miRNA", ylab = "Senders", main = "EVmiR_score in senders", margins = c(60,100,40,20),
             titleX = FALSE, branches_lwd = 0.1, fontsize_row = text_size,
-            fontsize_col = text_size, labCol = colnames(cci), labRow = rownames(cci), heatmap_layers = theme(axis.line=element_blank()), label_names = c("Sender","miRNA","activity"), ...)
+            fontsize_col = text_size, labCol = colnames(cci), labRow = rownames(cci), heatmap_layers = theme(axis.line=element_blank()), label_names = c("Sender","miRNA","EVmiR_score"), ...)
     } else {
-        heatmaply::heatmaply(x = as.matrix(cci), colors = heat_col, dendrogram = "none", xlab = "Senders", ylab = "miRNA", main = "miRNA activity in senders", margins = c(60,100,40,20),
+        heatmaply::heatmaply(x = as.matrix(cci), colors = heat_col, dendrogram = "none", xlab = "Senders", ylab = "miRNA", main = "EVmiR_score in senders", margins = c(60,100,40,20),
             titleX = FALSE, branches_lwd = 0.1, fontsize_row = text_size,
-            fontsize_col = text_size, labCol = colnames(cci), labRow = rownames(cci), heatmap_layers = theme(axis.line=element_blank()), label_names = c("Sender","miRNA","activity"), ...)
+            fontsize_col = text_size, labCol = colnames(cci), labRow = rownames(cci), heatmap_layers = theme(axis.line=element_blank()), label_names = c("miRNA","Sender","EVmiR_score"), ...)
+    }
+}
+
+#' @title Heatmap plot of inferred targets in receivers
+#'
+#' @description heatmap plot of inferred targets in receivers. Rows for cell-type-specific miRNAs, and columns for targets in receivers by default
+#' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
+#' @param celltype which cell types as receivers to plot, one or more cell types.
+#' @param targetgenes which targetgenes to plot. Default is to plot all inferred target genes in receivers.
+#' @param limits A parameter \code{\link[heatmaply]{heatmaply}}, a two dimensional numeric vector specifying the data range for the scale. Default is 0-1
+#' @param text_size Size of text labels. Default is \code{10}
+#' @param if_horizontal Whether to plot with the horizontal direction. Default is \code{TRUE}
+#' @param viridis_option option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".
+#' @param ... parameters pass to \code{\link[heatmaply]{heatmaply}}, e.g., grid_color, grid_width
+#' @import heatmaply Matrix
+#' @importFrom reshape2 dcast
+#' @return Heatmap plot of inferred targets
+#' @export
+
+plot_target_heatmap <- function(object, condition = NULL, celltype, targetgenes = NULL, limits = c(0,1), text_size = 10, if_horizontal = TRUE, viridis_option = "D", ...) {
+    # get simple output
+    cci_simple <- get_miRTalk_cci(object)
+    if (nrow(cci_simple) == 0) {
+        stop("No cci found in object!")
+    }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
+    celltype_sender <- unique(cci_simple$celltype_sender)
+    celltype_receiver <- unique(cci_simple$celltype_receiver)
+    if (!is.null(celltype[1])) {
+        if (!all(celltype %in% celltype_receiver)) {
+            print(celltype_receiver)
+            stop("Please input the right celltype name as shown above!")
+        }
+        cci_simple <- cci_simple[cci_simple$celltype_receiver %in% celltype,]
+    }
+    if (!is.null(targetgenes)) {
+        cci_simple <- cci_simple[cci_simple$target_gene %in% targetgenes,]
+    }
+    cci_simple$celltype_sender <- paste0(cci_simple$celltype_sender,":", cci_simple$miRNA)
+    cci_simple$target_gene <- paste0(cci_simple$celltype_receiver,":", cci_simple$target_gene)
+    cci <- unique(cci_simple[, c("celltype_sender", "target_gene", "specifity")])
+    if (length(unique(cci$celltype_sender)) < 2 | length(unique(cci$target_gene)) < 2) {
+        stop("Limited celltype_sender and target_gene to plot!")
+    }
+    cci <- reshape2::dcast(data = cci, formula = celltype_sender ~ target_gene, fun.aggregate = mean, value.var = "specifity", fill = 0)
+    rownames(cci) <- cci$celltype_sender
+    cci <- cci[, -1]
+    if (!if_horizontal) {
+      cci <- as.data.frame(t(cci))
+    }
+    heat_col <- viridis::viridis(n = 256, alpha = 1, begin = 0, end = 1, option = viridis_option)
+    if(if_horizontal) {
+        heatmaply::heatmaply(x = as.matrix(cci), colors = heat_col, dendrogram = "none", xlab = paste0("Target genes in ",celltype), ylab = "Senders", main = "Specifity of miRNAs in senders on target genes", margins = c(60,100,40,20),
+            titleX = FALSE, branches_lwd = 0.1, fontsize_row = text_size,
+            fontsize_col = text_size, labCol = colnames(cci), labRow = rownames(cci), heatmap_layers = theme(axis.line=element_blank()), label_names = c("Sender", "Receiver", "Specifity"), limits = limits, ...)
+    } else {
+        heatmaply::heatmaply(x = as.matrix(cci), colors = heat_col, dendrogram = "none", xlab = "Senders", ylab = paste0("Target genes in ",celltype), main = "Specifity of miRNAs in senders on target genes", margins = c(60,100,40,20),
+            titleX = FALSE, branches_lwd = 0.1, fontsize_row = text_size,
+            fontsize_col = text_size, labCol = colnames(cci), labRow = rownames(cci), heatmap_layers = theme(axis.line=element_blank()), label_names = c("Receiver", "Sender", "Specifity"), limits = limits, ...)
     }
 }
 
@@ -750,8 +842,9 @@ plot_miR_heatmap <- function(object, celltype = NULL, miRNA = NULL, text_size = 
 #'
 #' @description Bubble plot of inferred miRNA from senders top receivers. Rows for cell pairs, and columns for miRNAs by default.
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype which cell types to plot. Default is to plot all cell types
-#' @param miRNA which miRNAs to plot. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to plot. Default is to plot all inferred miRNAs in senders.
 #' @param if_show_autocrine Whether to show autocrine. Default is \code{FALSE}
 #' @param if_horizontal Whether to plot with the horizontal direction. Default is \code{TRUE}
 #' @param viridis_option option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".
@@ -761,7 +854,7 @@ plot_miR_heatmap <- function(object, celltype = NULL, miRNA = NULL, text_size = 
 #' @return ggplot2 object for Bubble plot of inferred miRNA
 #' @export
 
-plot_miR_bubble <- function(object, celltype = NULL, miRNA = NULL, if_show_autocrine = FALSE, if_horizontal = TRUE, viridis_option = "D") {
+plot_miR_bubble <- function(object, condition = NULL, celltype = NULL, miRNA = NULL, if_show_autocrine = FALSE, if_horizontal = TRUE, viridis_option = "D") {
     # check input
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -770,9 +863,18 @@ plot_miR_bubble <- function(object, celltype = NULL, miRNA = NULL, if_show_autoc
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     celltype_sender <- unique(cci$celltype_sender)
     if (!is.null(celltype[1])) {
-        if (all(celltype %in% celltype_sender)) {
+        if (!all(celltype %in% celltype_sender)) {
+            print(celltype_sender)
             stop("Please input the right celltype name!")
         }
         cci <- cci[cci$celltype_sender %in% celltype, ]
@@ -788,7 +890,7 @@ plot_miR_bubble <- function(object, celltype = NULL, miRNA = NULL, if_show_autoc
         cci <- cci[cci$celltype_sender != cci$celltype_receiver, ]
     }
     cci$cellpair <- paste0(cci$celltype_sender, " | ", cci$celltype_receiver)
-    cci <- unique(cci[, c("cellpair", "miRNA", "miRNA_activity", "prob")])
+    cci <- unique(cci[, c("cellpair", "miRNA", "EVmiR_score", "score")])
     if (length(unique(cci$cellpair)) < 2 | length(unique(cci$miRNA)) < 2) {
         stop("Limited cellpair and miRNA to plot!")
     }
@@ -799,30 +901,31 @@ plot_miR_bubble <- function(object, celltype = NULL, miRNA = NULL, if_show_autoc
     x_len <- length(miR_name)
     cci <- .get_coord(cci, cellpair, y_len, miR_name, x_len)
     if (if_horizontal) {
-        ggplot2::ggplot(data = cci) + ggplot2::geom_point(ggplot2::aes(x = x, y = y, color = prob,
-            size = miRNA_activity)) + viridis::scale_colour_viridis(option = viridis_option) + ggplot2::scale_y_continuous(name = "Senders | Receivers",
+        ggplot2::ggplot(data = cci) + ggplot2::geom_point(ggplot2::aes(x = x, y = y, color = score,
+            size = EVmiR_score)) + viridis::scale_colour_viridis(option = viridis_option) + ggplot2::scale_y_continuous(name = "Senders | Receivers",
             breaks = 1:y_len, labels = cellpair, limits = c(1, y_len)) + ggplot2::scale_x_continuous(name = "EV-derived miRNAs",
-            breaks = 1:x_len, labels = miR_name, limits = c(1, x_len)) + ggplot2::labs(color = "prob",
-            size = "miRNA activity") + ggplot2::theme_bw() + ggplot2::theme(panel.grid = ggplot2::element_blank(),
+            breaks = 1:x_len, labels = miR_name, limits = c(1, x_len)) + ggplot2::labs(color = "max_score",
+            size = "EVmiR_score") + ggplot2::theme_bw() + ggplot2::theme(panel.grid = ggplot2::element_blank(),
             axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
     } else {
-        ggplot2::ggplot(data = cci) + ggplot2::geom_point(ggplot2::aes(x = y, y = x, color = prob,
-            size = miRNA_activity)) + viridis::scale_colour_viridis(option = viridis_option) + ggplot2::scale_x_continuous(name = "Senders | Receivers",
+        ggplot2::ggplot(data = cci) + ggplot2::geom_point(ggplot2::aes(x = y, y = x, color = score,
+            size = EVmiR_score)) + viridis::scale_colour_viridis(option = viridis_option) + ggplot2::scale_x_continuous(name = "Senders | Receivers",
             breaks = 1:y_len, labels = cellpair, limits = c(1, y_len)) + ggplot2::scale_y_continuous(name = "EV-derived miRNAs",
-            breaks = 1:x_len, labels = miR_name, limits = c(1, x_len)) + ggplot2::labs(color = "prob",
-            size = "miRNA activity") + ggplot2::theme_bw() + ggplot2::theme(panel.grid = ggplot2::element_blank(),
+            breaks = 1:x_len, labels = miR_name, limits = c(1, x_len)) + ggplot2::labs(color = "max_score",
+            size = "EVmiR_score") + ggplot2::theme_bw() + ggplot2::theme(panel.grid = ggplot2::element_blank(),
             axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
     }
 }
 
 #' @title Chord plot of EV-derived miRNAs and target genes
 #'
-#' @description Chord plot of EV-derived miRNAs and target genes from senders to receivers.
+#' @description Chord plot of EV-derived miRNAs and target genes from senders to receivers with communication score
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype_sender Name of celltype_sender. One or more cell types
 #' @param celltype_receiver Name of celltype_receiver. One or more cell types
 #' @param celltype_color Colors for the celltype_sender nodes and celltype_receiver nodes, or use \code{"NO"} to make it simple
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param edge_color Colors for the edges from the sender cell type
 #' @param edge_type Types for the edges from the sender cell type. Default is \code{"circle"}. \code{"big.arrow"} for big arrow, "triangle" for triangle, "ellipse" for ellipse, "curved" for curved. Details see \code{\link[circlize]{chordDiagram}}
 #' @param show_type which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}
@@ -835,7 +938,7 @@ plot_miR_bubble <- function(object, celltype = NULL, miRNA = NULL, if_show_autoc
 #' @return Chord plot of EV-derived miRNAs and target genes
 #' @export
 
-plot_miR2tar_chord <- function(object, celltype_sender, celltype_receiver, celltype_color = NULL, miRNA = NULL, edge_color = NULL, edge_type = "circle", show_type = "prob", text_size = 0.5, y_scale = 1, ...) {
+plot_miR2tar_chord <- function(object, condition = NULL, celltype_sender, celltype_receiver, celltype_color = NULL, miRNA = NULL, edge_color = NULL, edge_type = "circle", text_size = 0.5, y_scale = 1, ...) {
     # check object
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -845,13 +948,23 @@ plot_miR2tar_chord <- function(object, celltype_sender, celltype_receiver, cellt
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     # check celltype_sender
     if (!all(celltype_sender %in% cci$celltype_sender)) {
-        stop("Please provide the correct name of celltype_sender!")
+        print(celltype)
+        stop("Please provide the correct name of celltype_sender as shown above!")
     }
     # check celltype_receiver
     if (!all(celltype_receiver %in% cci$celltype_receiver)) {
-        stop("Please provide the correct name of celltype_receiver!")
+        print(celltype)
+        stop("Please provide the correct name of celltype_receiver as shown above!")
     }
     cci <- cci[cci$celltype_sender %in% celltype_sender & cci$celltype_receiver %in% celltype_receiver, ]
     if (nrow(cci) == 0) {
@@ -935,11 +1048,7 @@ plot_miR2tar_chord <- function(object, celltype_sender, celltype_receiver, cellt
     celltype <- c(cci$celltype_sender, cci$celltype_receiver)
     grid_col <- clu_col[celltype]
     names(grid_col) <- c(cci$miRNA, cci$target_gene)
-    if (show_type == "prob") {
-        cci <- unique(cci[ ,c("miRNA", "target_gene", "prob")])
-    } else {
-        cci <- unique(cci[ ,c("miRNA", "target_gene", "score")])
-    }
+    cci <- unique(cci[ ,c("miRNA", "target_gene", "score")])
     if (celltype_color_new) {
         chordDiagram(x = cci, grid.col = grid_col, col = link_color, preAllocateTracks = 1, transparency = 0.25, directional = 1, direction.type = c("arrows", "diffHeight"),
             diffHeight = -0.04, annotationTrack = "grid", link.arr.type = edge_type, ...)
@@ -959,21 +1068,24 @@ plot_miR2tar_chord <- function(object, celltype_sender, celltype_receiver, cellt
 #'
 #' @description Chord plot of EV-derived miRNAs and target genes from senders to receivers.
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype_sender Name of celltype_sender. One cell type
 #' @param celltype_receiver Name of celltype_receiver. One cell type
 #' @param celltype_color Colors for the celltype_sender nodes and celltype_receiver nodes, or use \code{"NO"} to make it simple
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
+#' @param node_size Size of node. Default is \code{3}
 #' @param edge_color Colors for the edges from the sender cell type
 #' @param text_size Size of text labels. Default is \code{3}
 #' @param edge_width Width of edge. Default is \code{0.5}
+#' @param if_show_legend Whether to show legends. Default is FALSE
 #' @import Matrix ggraph
 #' @importFrom scales hue_pal
 #' @importFrom igraph graph_from_data_frame
 #' @return ggplot2 object for Circle plot of EV-derived miRNAs and target genes
 #' @export
 
-plot_miR2tar_circle <- function(object, celltype_sender, celltype_receiver, celltype_color = NULL, miRNA = NULL, edge_color = NULL,
-    edge_width = 0.5, text_size = 3) {
+plot_miR2tar_circle <- function(object, condition = NULL, celltype_sender, celltype_receiver, celltype_color = NULL, miRNA = NULL, node_size = 3, edge_color = NULL,
+    edge_width = 0.5, text_size = 3, if_show_legend = F) {
     # check object
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -983,13 +1095,23 @@ plot_miR2tar_circle <- function(object, celltype_sender, celltype_receiver, cell
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     # check celltype_sender
     if (!celltype_sender %in% cci$celltype_sender) {
-        stop("Please provide the correct name of celltype_sender!")
+        print(celltype)
+        stop("Please provide the correct name of celltype_sender as shown above!")
     }
     # check celltype_receiver
     if (!celltype_receiver %in% cci$celltype_receiver) {
-        stop("Please provide the correct name of celltype_receiver!")
+        print(celltype)
+        stop("Please provide the correct name of celltype_receiver as shown above!")
     }
     cci <- cci[cci$celltype_sender == celltype_sender & cci$celltype_receiver == celltype_receiver, ]
     if (nrow(cci) == 0) {
@@ -1031,7 +1153,8 @@ plot_miR2tar_circle <- function(object, celltype_sender, celltype_receiver, cell
         }
         link_color <- edge_color
     }
-    cci <- unique(cci[ ,c("miRNA", "target_gene", "miRNA_activity", "target_gene_activity", "prob", "score")])
+    cci <- unique(cci[ ,c("miRNA", "target_gene", "EVmiR_score", "target_gene_activity", "score")])
+    cci <- .get_miR2tar_circle(cci)
     target_genes<- as.data.frame(table(cci$target_gene), stringsAsFactors = F)
     if (max(target_genes$Freq) > 1) {
         target_genes <- target_genes[target_genes$Freq > 1, ]
@@ -1041,18 +1164,18 @@ plot_miR2tar_circle <- function(object, celltype_sender, celltype_receiver, cell
             cci[cci$target_gene == target_genes$Var1[i], ]$target_gene <- target_genes_tmp
         }
     }
-    cci_sender <- unique(data.frame(name = cci$miRNA, activity = cci$miRNA_activity, group = "sender", stringsAsFactors = FALSE))
+    cci_sender <- unique(data.frame(name = cci$miRNA, activity = 1, group = "sender", stringsAsFactors = FALSE))
     cci_new <- data.frame()
     for (i in 1:nrow(cci_sender)) {
         cci1 <- cci[cci$miRNA == cci_sender$name[i], ]
         cci_new <- rbind(cci_new, cci1)
     }
     cci <- cci_new
-    cci_receiver <- unique(data.frame(name = cci$target_gene, activity = cci$target_gene_activity, group = "receiver", stringsAsFactors = FALSE))
+    cci_receiver <- unique(data.frame(name = cci$target_gene, activity = 1, group = "receiver", stringsAsFactors = FALSE))
     cci_sender$id <- 1:nrow(cci_sender)
     cci_receiver$id <- 1:nrow(cci_receiver)
     cci_node <- rbind(cci_sender, cci_receiver)
-    cci_node1 <- data.frame(name = celltype_sender, activity = max(cci_node$activity), group = "sender", id = 0, stringsAsFactors = FALSE)
+    cci_node1 <- data.frame(name = celltype_sender, activity = 1, group = "sender", id = 0, stringsAsFactors = FALSE)
     cci_node <- rbind(cci_node1, cci_node)
     cci_node$miR2tar <- "sender"
     for (i in 1:nrow(cci_sender)) {
@@ -1066,29 +1189,39 @@ plot_miR2tar_circle <- function(object, celltype_sender, celltype_receiver, cell
     colnames(cci)[1:2] <- c("from", "to")
     mygraph <- igraph::graph_from_data_frame(cci, vertices = cci_node)
     if (celltype_color_new) {
-        ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
+        p <- ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
             geom_edge_diagonal(color = link_color, width = edge_width, alpha = 0.8) +
-            geom_node_point(aes(x = x*1.07, y = y*1.07, color = group, size = activity)) +
+            geom_node_point(aes(x = x*1.07, y = y*1.07, color = group), size = node_size) +
             scale_color_manual(values = as.character(clu_col)[c(2,1)]) +
             geom_node_text(aes(x = x*1.25, y = y*1.25,label = name), size = text_size) +
             expand_limits(x = c(-1.3, 1.3), y = c(-1.3, 1.3)) + theme_void()
+        if (if_show_legend) {
+            p
+        } else {
+            p+NoLegend()
+        }
     } else {
-        ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
+        p <- ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
             geom_edge_diagonal(color = link_color, width = edge_width) +
-            geom_node_point(aes(x = x*1.07, y = y*1.07, color = miR2tar, size = activity)) +
+            geom_node_point(aes(x = x*1.07, y = y*1.07, color = miR2tar), size = node_size) +
             geom_node_text(aes(x = x*1.25, y = y*1.25, label = name), size = text_size) +
             expand_limits(x = c(-1.3, 1.3), y = c(-1.3, 1.3)) + theme_void()
+        if (if_show_legend) {
+            p
+        } else {
+            p+NoLegend()
+        }
     }
 }
 
 #' @title Heatmap plot of EV-derived miRNAs and target genes
 #'
-#' @description Heatmap plot of EV-derived miRNAs and target genes from senders to receivers.
+#' @description Heatmap plot of EV-derived miRNAs and target genes from senders to receivers with communication score displayed
 #' @param object miRTalk object after \code{\link{find_miRTalk}}
+#' @param condition which conditions to plot. Default is plot all conditions.
 #' @param celltype_sender Name of celltype_sender
 #' @param celltype_receiver Name of celltype_receiver
-#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs
-#' @param show_type which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}
+#' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param text_size Size of text labels. Default is \code{3}
 #' @param if_horizontal Whether to plot with the horizontal direction. Default is \code{TRUE}
 #' @param viridis_option option in \code{\link[viridis]{scale_color_viridis}}, can be "A", "B", "C", "D", "E", "F", "G", "H". Default is "D".
@@ -1098,7 +1231,7 @@ plot_miR2tar_circle <- function(object, celltype_sender, celltype_receiver, cell
 #' @return Heatmap plot of EV-derived miRNAs and target genes
 #' @export
 
-plot_miR2tar_heatmap <- function(object, celltype_sender, celltype_receiver, miRNA = NULL, show_type = "prob", text_size = 5, if_horizontal = TRUE, viridis_option = "D", ...) {
+plot_miR2tar_heatmap <- function(object, condition = NULL, celltype_sender, celltype_receiver, miRNA = NULL, text_size = 5, if_horizontal = TRUE, viridis_option = "D", ...) {
     # check object
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")
@@ -1108,13 +1241,23 @@ plot_miR2tar_heatmap <- function(object, celltype_sender, celltype_receiver, miR
     if (nrow(cci) == 0) {
         stop("No cci found in object!")
     }
+    if (!is.null(condition)) {
+        cci_condition <- unique(cci$condition)
+        if (!all(condition %in% cci_condition)) {
+            print(condition)
+            stop("Please input the right condition as shown above!")
+        }
+        cci <- cci[cci$condition %in% condition, ]
+    }
     # check celltype_sender
     if (!celltype_sender %in% cci$celltype_sender) {
-        stop("Please provide the correct name of celltype_sender!")
+        print(celltype)
+        stop("Please provide the correct name of celltype_sender as shown above!")
     }
     # check celltype_receiver
     if (!celltype_receiver %in% cci$celltype_receiver) {
-        stop("Please provide the correct name of celltype_receiver!")
+        print(celltype)
+        stop("Please provide the correct name of celltype_receiver as shown above!")
     }
     cci <- cci[cci$celltype_sender == celltype_sender & cci$celltype_receiver == celltype_receiver, ]
     if (nrow(cci) == 0) {
@@ -1128,17 +1271,13 @@ plot_miR2tar_heatmap <- function(object, celltype_sender, celltype_receiver, miR
         }
         cci <- cci[cci$miRNA %in% miRNA, ]
     }
-    if (show_type == "prob") {
-        cci <- unique(cci[ ,c("miRNA", "target_gene", "prob")])
-        cci <- reshape2::dcast(data = cci, formula = miRNA ~ target_gene, value.var = "prob", fill = NA)
-        main_title <- "prob"
-    } else {
-        cci <- unique(cci[ ,c("miRNA", "target_gene", "score")])
-        cci <- reshape2::dcast(data = cci, formula = miRNA ~ target_gene, value.var = "score", fill = NA)
-        main_title <- "score"
-    }
+    cci <- unique(cci[ ,c("miRNA", "target_gene", "score")])
+    cci <- reshape2::dcast(data = cci, formula = miRNA ~ target_gene, fun.aggregate = mean, value.var = "score", fill = 0)
+    main_title <- "score"
     rownames(cci) <- cci$miRNA
     cci <- cci[, -1]
+    cci <- as.matrix(cci)
+    cci[which(cci == 0)] <- NA
     if (!if_horizontal) {
         cci <- as.data.frame(t(cci))
     }

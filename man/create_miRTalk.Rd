@@ -4,16 +4,30 @@
 \alias{create_miRTalk}
 \title{Create miRTalk object}
 \usage{
-create_miRTalk(sc_data, sc_celltype, species, if_normalize = TRUE)
+create_miRTalk(
+  sc_data,
+  sc_celltype,
+  species,
+  condition,
+  if_normalize = TRUE,
+  evbiog,
+  risc
+)
 }
 \arguments{
 \item{sc_data}{A data.frame or matrix or dgCMatrix containing raw counts of single-cell RNA-seq data. see \code{\link{demo_sc_data}}}
 
-\item{sc_celltype}{A character containing the cell type of the single-cell RNA-seq data}
+\item{sc_celltype}{A character containing the cell type of the single-cell RNA-seq data with the same length as the number of cells.}
 
 \item{species}{A character meaning species of the single-cell transcriptomics data.\code{'Human'}, \code{'Mouse'} or \code{'Rat'}}
 
+\item{condition}{A character with the same length as the number of cells, e.g., control/disease/treatment, phase 1/2/3, men/women.}
+
 \item{if_normalize}{Normalize sc_data with Seurat LogNormalize. Set it \code{FLASE} when sc_data has been normalized.}
+
+\item{evbiog}{A data.frame of the system data containing extracellular vesicle biogenesis genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
+
+\item{risc}{A data.frame of the system data containing RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
 }
 \value{
 miRTalk object

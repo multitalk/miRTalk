@@ -7,6 +7,7 @@
 #' @slot miR A data.frame containing expressed miRNA genes.
 #' @slot miR2tar A data.frame containing expressed miRNAs and their target genes.
 #' @slot type A character containing the type of miRNA.
+#' @slot per_test_list Generated background distribution for permutation test.
 #' @slot cci A data.frame containing the significantly enriched EV-derived miRNAs and their target genes.
 #' @import methods
 #' @name miRTalk
@@ -15,5 +16,5 @@
 #' @exportClass miRTalk
 
 setClass("miRTalk", representation(data = "list", meta = "data.frame", species = "character",
-    miR = "data.frame", miR2tar = "data.frame", type = "character", cci = "data.frame"), prototype(data = list(), meta = data.frame(), species = character(),
-    miR = data.frame(), miR2tar = data.frame(), type = character(), cci = data.frame()))
+    miR = "data.frame", miR2tar = "data.frame", type = "character", per_test_list = "list", cci = "data.frame"), prototype(data = list(), meta = data.frame(), species = character(),
+    miR = data.frame(), miR2tar = data.frame(), type = character(), per_test_list = list(), cci = data.frame()))

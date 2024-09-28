@@ -6,6 +6,7 @@
 \usage{
 plot_miRTalk_sankey(
   object,
+  condition = NULL,
   celltype = NULL,
   miRNA = NULL,
   celltype_color = NULL,
@@ -22,15 +23,17 @@ plot_miRTalk_sankey(
 \arguments{
 \item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
+\item{condition}{which conditions to plot. Default is plot all conditions.}
+
 \item{celltype}{which cell types to plot. Default is to plot all cell types}
 
-\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs}
+\item{miRNA}{which miRNAs to use. Default is to plot all inferred miRNAs in senders.}
 
 \item{celltype_color}{Colors for the cell types, whose length must be equal to \code{celltype}}
 
 \item{edge_color}{Colors for the edges from the sender cell type, whose length must be equal to \code{celltype}, Or use \code{"NO"} to cancel it}
 
-\item{show_type}{which type of miRNAs to show, \code{"number"}, \code{"activity"}, or \code{"score"} for sum of inferred miRNAs number and activity, respectively, or \code{"prob"} for max probability. Default is \code{"number"}}
+\item{show_type}{which type of miRNAs to show, \code{"number"}, \code{"EVmiR_score"}, or \code{"score"} for sum of inferred miRNAs number, EVmiR_score, and MiTI_score, respectively. Default is \code{"number"}}
 
 \item{if_show_autocrine}{Whether to show autocrine. Default is \code{FALSE}}
 
@@ -48,5 +51,5 @@ plot_miRTalk_sankey(
 Sankey plot of cell-cell communications mediated by EV-derived miRNA
 }
 \description{
-Sankey plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, activity, score, or the max probability
+Sankey plot of cell-cell communications from senders to receivers with the sum of inferred miRNAs number, EVmiR_score, or score
 }

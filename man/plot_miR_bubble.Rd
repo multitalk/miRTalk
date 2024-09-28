@@ -6,6 +6,7 @@
 \usage{
 plot_miR_bubble(
   object,
+  condition = NULL,
   celltype = NULL,
   miRNA = NULL,
   if_show_autocrine = FALSE,
@@ -16,9 +17,11 @@ plot_miR_bubble(
 \arguments{
 \item{object}{miRTalk object after \code{\link{find_miRTalk}}}
 
+\item{condition}{which conditions to plot. Default is plot all conditions.}
+
 \item{celltype}{which cell types to plot. Default is to plot all cell types}
 
-\item{miRNA}{which miRNAs to plot. Default is to plot all inferred miRNAs}
+\item{miRNA}{which miRNAs to plot. Default is to plot all inferred miRNAs in senders.}
 
 \item{if_show_autocrine}{Whether to show autocrine. Default is \code{FALSE}}
 
