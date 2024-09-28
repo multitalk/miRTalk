@@ -66,7 +66,7 @@ __`mir2tar.rda` include two data.frame of the system data containing containing 
 |Rat  | 179    |1,626    |
 
 
-__`mir2path.rda` include two data.frame of the system data containing miRNA-related pathways from KEGG, Reactome, GO_BP, Wikipathways__
+__`mir2path.rda` is a data.frame of the system data containing miRNA-related pathways from KEGG, Reactome, GO_BP, Wikipathways__
 
 ```
 > load("mir2path.rda")
