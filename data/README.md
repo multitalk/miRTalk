@@ -61,11 +61,28 @@ __`mir2tar.rda` include two data.frame of the system data containing containing 
 
 |__Species__|__Number of EV-derived miRNAs__|__Number of EV-derived MiTIs__|
 |:---:    |:---:   |:---:  |
-|Human| 2567  |1595450|
-|Mouse| 935   |484123 |
-|Rat  | 179   |1626   |
+|Human| 2,567  |1,595,450|
+|Mouse| 935    |484,123  |
+|Rat  | 179    |1,626    |
 
 
+__`mir2path.rda` include two data.frame of the system data containing miRNA-related pathways from KEGG, Reactome, GO_BP, Wikipathways__
 
+```
+> load("mir2path.rda")
+> str(mir2path)
+'data.frame':	130339 obs. of  4 variables:
+ $ term  : chr  "2-OXOCARBOXYLIC ACID METABOLISM" "ABC TRANSPORTERS" "ABC TRANSPORTERS" "ABC TRANSPORTERS" ...
+ $ mir   : chr  "hsa-miR-4323" "hsa-miR-223-3p" "hsa-miR-548q" "hsa-miR-5571-3p" ...
+ $ type  : chr  "KEGG" "KEGG" "KEGG" "KEGG" ...
+ $ source: chr  "miRPathDB2" "miRPathDB2" "miRPathDB2" "miRPathDB2" ...
+```
+
+|__Functional annotation type__|__Total number__|__Unique number__|
+|:---:    |:---:   |:---:  |
+|GO BP        | 77,897    |6,040|
+|KEGG         | 8,416     |261  |
+|Reactome     | 26,530    |1,592|
+|Wikipathways | 17,496    |458  |
 
 
