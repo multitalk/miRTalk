@@ -103,9 +103,10 @@ An object of class miRTalk
 - __miRTalk allows to infer miRNA-target interactions with [positive regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-positive-regulation). The default is [negative regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-negative-regulation)__
 - miRTalk allows to use the parallel processing for `find_miRTalk`
 - __miRTalk allows to infer miRNA-target interactions [under different conditions](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-under-different-conditions)__
-- __miRTalk allows to use different databases of miRNA-target interactions__
+- __miRTalk allows to use [different databases of miRNA-target interactions](https://github.com/multitalk/miRTalk/wiki/Inference-with-different-databases-of-miRNA%E2%80%90target-interactions)__
   - miRTarBase, TarBase, et al.
-- __miRTalk allows to [directly infer cell-cell communications skiping deconvolution](https://github.com/ZJUFanLab/SpaTalk/wiki/Directly-infer-cell-cell-communication-skiping-deconvolution)__
+- __miRTalk allows to infer miRNA-target interactions [with custom data provided by users](https://github.com/multitalk/miRTalk/wiki/Inference-with-custom-data-provided-by-users)__
+  - custom mir_data, mir2tar, highly varible genes, et al.
 - __miRTalk can provide [analysis of specifity for a given receiver cell type](https://github.com/multitalk/miRTalk/wiki/Analysis-of-specifity-for-a-given-receiver-cell-type)__
 - __miRTalk can provide [analysis of functional annotations for a miRNA and its target gene](https://github.com/multitalk/miRTalk/wiki/Analysis-of-functional-annotations-for-a-miRNA-and-its-target-gene)__
 - __miRTalk can provide [analysis of potential of circulating miRNAs and organ-organ communication](https://github.com/multitalk/miRTalk/wiki/Analysis-of-potential-of-circulating-miRNAs-and-organ%E2%80%90organ-communication)__
