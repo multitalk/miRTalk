@@ -5,7 +5,7 @@
 
 <img src='https://github.com/multitalk/miRTalk/blob/main/img/workflow.png'>
 
-MicroRNAs are released from cells in extracellular vesicles (EVs), including exosomes and microvesicles, representing an essential mode of cell-cell communications via inhibitory effect on gene expression of receivers. The advent of single-cell RNA-sequencing (scRNA-seq) technologies has ushered in an era of elucidating EV-derived miRNA-mediated cell-cell communications at an unprecedented resolution. However, the lack of computational method to infer such communications from scRNA-seq data poses an outstanding challenge. Herein, __we present miRTalk, a pioneering framework for discerning EV-derived miRNA-mediated cell-cell communications with a probabilistic model and a meticulously curated database, miRTalkDB, which catalogues EV-derived miRNA-target associations__. Rigorous benchmarking against simulated and real-world datasets demonstrated the remarkable precision and robustness of miRTalk. Subsequently, we employed miRTalk to unravel the in-depth communicative mechanisms underlying three disease scenarios. In summary, miRTalk represents the first approach for inferring EV-derived miRNA-mediated cell-cell communications from scRNA-seq data, furnishing invaluable insights into the intercellular dynamics underpinning pathological processes.
+MicroRNAs are released from cells in extracellular vesicles (EVs), including exosomes and microvesicles, representing an essential mode of cell-cell communications via regulatory effect on gene expression of receivers. The advent of single-cell RNA-sequencing (scRNA-seq) technologies has ushered in an era of elucidating EV-derived miRNA-mediated cell-cell communications at an unprecedented resolution. However, the lack of computational method to infer such communications from scRNA-seq data poses an outstanding challenge. Herein, we present miRTalk, a pioneering framework for inferreing EV-derived miRNA-mediated cell-cell communications with a curated database, miRTalkDB, which include EV-derived miRNA-target associations. Our miRTalk considers 1) the potential of producing EVs and 2) the expression of miRNAs in senders as well as 3) the activation of miRNA processing machinery and 4) the expression of target genes in receivers.
 
 
 # Install
@@ -30,24 +30,31 @@ miRTalk method consists of three components, wherein the first is to infer the E
 
 - ### Inference of EV-derived miRNA and highly variable target genes
 ```
-# sc_data: A data.frame or matrix or dgCMatrix containing raw counts of single-cell RNA-seq data
-# sc_celltype: A character containing the cell type of the single-cell RNA-seq data
-
-> obj <- create_miRTalk(sc_data, sc_celltype, species = "Human", if_normalize = TRUE)
+# sc_data: a data.frame or matrix or dgCMatrix containing raw counts of single-cell RNA-seq data
+# sc_celltype: a character containing the cell type of the single-cell RNA-seq data
+# condition: a character with the same length as the number of cells, e.g., control/disease/treatment, phase 1/2/3, men/women
+# evbiog: a data.frame of the system data containing extracellular vesicle biogenesis genes (GO:0140112)
+# risc: a data.frame of the system data containing RNA-induced silencing complex (RISC) related genes
+# mir_info: 
+# 
+> obj <- create_miRTalk(sc_data = sc_data,
+                         sc_celltype = sc_celltype,
+                         species = "Human",
+                         condition = rep("cancer", length(sc_celltype)),
+                         evbiog = evbiog,risc = risc)
 > obj
-An object of class miRTalk 
+An object of class miRTalk
 0 EV-derived miRNA-target interactions
 
-> obj <- find_miRNA(object = obj, mir_info = mir_info)
 > obj <- find_hvtg(object = obj)
+> obj <- find_miRNA(object = obj,mir_info = mir_info,mir2tar = mir2tar)
 ```
 
-- ### Inference of cell-cell communication mediated by EV-derived miRNAs and their downstream targets
+- ### Inference of cell-cell communication mediated by EV-derived miRNA-target interactions
 ```
-# object: miRTalk object after running find_miRNA() and find_hvtg()
-# mir2tar: A data.frame containing the priori knowledge of miRNA-target interactions
+# object: miRTalk object after running find_hvtg() abd find_miRNA() 
 
-> obj <- find_miRTalk(object = obj, mir2tar = mir2tar)
+> obj <- find_miRTalk(obj, if_doParallel = F)
 > obj
 An object of class miRTalk 
 2185 EV-derived miRNA-target interactions
@@ -78,12 +85,31 @@ An object of class miRTalk
 > plot_miR_heatmap(object = obj)
 ```
 
+- ### Visualization of specifity analysis
+
+```
+> plot_target_heatmap(object = obj, celltype = "Bcell")
+```
+
 - ### Visualization of miRNA-target interaction network
 ```
 > plot_miR2tar_chord(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_circle(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 > plot_miR2tar_heatmap(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
 ```
+
+# Note
+- __miRTalk can be applied to either [single-cell transcriptomic data]() or [spatial transcriptomic data](https://doi.org/10.1038/s41587-022-01517-6)__
+- __SpaTalk allows to use custom [LRIs(wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-customed-lrpairs), [pathways, and TFs database (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-customed-pathways)__
+- __SpaTalk allows to use the parallel processing for `dec_celltype()`, `dec_cci()`, and `dec_cci_all()`__
+- __SpaTalk allows to [use other deconvolution methods](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-other-deconvolution-methods) followed by the inference of cell-cell communications__
+  - RCTD, Seurat, SPOTlight, deconvSeq, stereoscope, cell2location, or other methods
+- __SpaTalk allows to [directly infer cell-cell communications skiping deconvolution](https://github.com/ZJUFanLab/SpaTalk/wiki/Directly-infer-cell-cell-communication-skiping-deconvolution)__
+- __SpaTalk can visualize [cell-type compositions (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-types) and [cell-cell communications (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-cell-communications)__
+- LRIs and pathways can be download at[`data/`](https://github.com/ZJUFanLab/SpaTalk/tree/main/data) 
+- Demo data can be download at[`inst/extdata/`](https://github.com/ZJUFanLab/SpaTalk/tree/main/inst/extdata)
+
+__Please refer to the [tutorial vignette](https://raw.githack.com/multitalk/awesome-cell-cell-communication/main/method/tutorial.html) with demo data processing steps. Detailed functions see the [document](https://raw.githack.com/ZJUFanLab/SpaTalk/main/vignettes/SpaTalk.pdf)__
 
 # About
 miRTalk was developed by Xin Shao. Should you have any questions, please contact Xin Shao at xin_shao@zju.edu.cn

@@ -1,25 +1,12 @@
 library(miRTalk)
 load("rawdata.rda")
-samplename <- unique(sc_meta$Time.point)
-sc_data <- rev_gene(data = sc_data, data_type = "count",species = "Mouse",geneinfo = geneinfo)
-
-a2 <- sc_meta[sc_meta$Time.point == samplename[1],]
-a1 <- sc_data[,a2$id]
-obj <- create_miRTalk(sc_data = a1,sc_celltype = as.character(a2$Annotation.Level.2), species = "Mouse",if_normalize = F)
-obj <- find_miRNA(obj, mir_info = mir_info)
-obj <- find_hvtg(obj)
-obj <- find_miRTalk(obj, mir2tar = mir2tar,use_n_cores = 4)
-obj1 <- obj
-
-a2 <- sc_meta[sc_meta$Time.point != samplename[1],]
-a1 <- sc_data[,a2$id]
-obj <- create_miRTalk(sc_data = a1,sc_celltype = as.character(a2$Annotation.Level.2), species = "Mouse",if_normalize = F)
-obj <- find_miRNA(obj, mir_info = mir_info)
-obj <- find_hvtg(obj)
-obj <- find_miRTalk(obj, mir2tar = mir2tar,use_n_cores = 4)
-obj2 <- obj
-
-# plot
+sc_data <- rev_gene(sc_data, data_type = 'count',species = 'Mouse',geneinfo = geneinfo)
+sc_meta[sc_meta$Time.point != "Uninjured",]$Time.point <- "Injured"
+obj <- create_miRTalk(sc_data = sc_data, sc_celltype = sc_meta$Annotation.Level.2,
+                      species = "Mouse", condition = sc_meta$Time.point, evbiog = evbiog, risc = risc, if_normalize = F)
+obj <- find_hvtg(object = obj)
+obj <- find_miRNA(object = obj,mir_info = mir_info,mir2tar = mir2tar)
+obj <- find_miRTalk(obj, use_n_cores = 16)
 
 # tsne plot
 library(Seurat)
