@@ -86,3 +86,38 @@ __`mir2path.rda` is a data.frame of the system data containing miRNA-related pat
 |Wikipathways | 17,496    |458  |
 
 
+__`geneinfo.rda` is a data.frame of the system data containing gene symbols__
+
+```
+> load("geneinfo.rda")
+> str(geneinfo)
+'data.frame':	288559 obs. of  3 variables:
+ $ symbol  : chr  "A1BG" "A1BG" "A1BG" "A1BG" ...
+ $ synonyms: chr  "A1B" "ABG" "GAB" "HYST2477" ...
+ $ species : chr  "Human" "Human" "Human" "Human" ...
+```
+
+__`gene2gene.rda` is a data.frame of the system data containing the gene orthologs among human, mouse, and rat__
+
+```
+> load("gene2gene.rda")
+> str(gene2gene)
+'data.frame':	33071 obs. of  3 variables:
+ $ gene      : chr  "ZGLP1" "LDLRAP1" "MDN1" "PRR35" ...
+ $ gene_other: chr  "Zglp1" "Ldlrap1" "Mdn1" "A930017K11Rik" ...
+ $ species   : chr  "Mouse" "Mouse" "Mouse" "Mouse" ...
+```
+
+__`gene2path.rda` is a data.frame of the system data containing gene-related pathways from KEGG, Reactome, GO_BP, Wikipathways__
+
+```
+> load("gene2path.rda")
+> str(gene2path)
+'data.frame':	2817311 obs. of  5 variables:
+ $ term   : chr  "ABC TRANSPORTERS" "ABC TRANSPORTERS" "ABC TRANSPORTERS" "ABC TRANSPORTERS" ...
+ $ gene   : chr  "ABCA1" "ABCA10" "ABCA12" "ABCA13" ...
+ $ type   : chr  "KEGG" "KEGG" "KEGG" "KEGG" ...
+ $ species: chr  "Human" "Human" "Human" "Human" ...
+ $ source : chr  "msigdbr" "msigdbr" "msigdbr" "msigdbr" ...
+```
+
