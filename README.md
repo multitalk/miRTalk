@@ -110,8 +110,7 @@ An object of class miRTalk
 - __miRTalk can provide [analysis of specifity for a given receiver cell type](https://github.com/multitalk/miRTalk/wiki/Analysis-of-specifity-for-a-given-receiver-cell-type)__
 - __miRTalk can provide [analysis of functional annotations for a miRNA and its target gene](https://github.com/multitalk/miRTalk/wiki/Analysis-of-functional-annotations-for-a-miRNA-and-its-target-gene)__
 - __miRTalk can provide [analysis of potential of circulating miRNAs and organ-organ communication](https://github.com/multitalk/miRTalk/wiki/Analysis-of-potential-of-circulating-miRNAs-and-organ%E2%80%90organ-communication)__
-- miRTalkDB can be download at[`data/`](https://github.com/multitalk/miRTalk/tree/main/data) 
-- Demo data can be download at[`inst/extdata/`](https://github.com/multitalk/miRTalk/tree/main/inst/extdata)
+- __miRTalkDB can be download at[`data/`](https://github.com/multitalk/miRTalk/tree/main/data)__
 
 __Please refer to the [tutorial vignette](https://raw.githack.com/multitalk/awesome-cell-cell-communication/main/method/tutorial.html) with demo data processing steps. Detailed functions see the [document](https://raw.githack.com/ZJUFanLab/SpaTalk/main/vignettes/SpaTalk.pdf)__
 
