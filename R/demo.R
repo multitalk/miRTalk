@@ -26,11 +26,7 @@ demo_sc_data <- function() {
 #' @examples geneinfo_demo <- demo_geneinfo()
 
 demo_geneinfo <- function() {
-    gene1 <- c("A1BG", "A1BG", "A2MP1", "Aco1", "Alb1")
-    gene2 <- c("A1B", "ABG", "A2MP", "Aco", "Alb")
-    species <- c("Human", "Human", "Human", "Mouse", "Rat")
-    geneinfo_demo <- data.frame(symbol = gene1, synonyms = gene2, species = species, stringsAsFactors = FALSE)
-    return(geneinfo_demo)
+    return(head(geneinfo))
 }
 
 #' @title Demo data of mir_info
@@ -41,12 +37,7 @@ demo_geneinfo <- function() {
 #' @examples mir_info_demo <- demo_mir_info()
 
 demo_mir_info <- function() {
-    miRNA <- c("hsa-miR-1", "hsa-miR-1", "hsa-miR-1", "hsa-miR-1", "mmu-miR-105", "rno-miR-106b")
-    miRNA_mature <- c("hsa-miR-1-5p", "hsa-miR-1-5p", "hsa-miR-1-3p", "hsa-miR-1-3p", "mmu-miR-105", "rno-miR-106b-5p")
-    gene <- c("MIR1-1", "MIR1-2","MIR1-1", "MIR1-2", "Mir105", "Mir106b")
-    species <- c("Human", "Human", "Human", "Human", "Mouse", "Rat")
-    mir_info_demo <- data.frame(miRNA = miRNA, miRNA_mature = miRNA_mature, gene = gene, species = species, stringsAsFactors = FALSE)
-    return(mir_info_demo)
+    return(head(mir_info))
 }
 
 #' @title Demo data of mir2tar
@@ -57,10 +48,5 @@ demo_mir_info <- function() {
 #' @examples mir2tar_demo <- demo_mir2tar()
 
 demo_mir2tar <- function() {
-    miRNA <- c("hsa-miR-1", "hsa-miR-1", "mmu-miR-105", "rno-miR-106b")
-    miRNA_mature <- c("hsa-miR-1-5p", "hsa-miR-1-3p", "mmu-miR-105", "rno-miR-106b-5p")
-    target_gene <- c("BDNF", "RBM28", "Abl2", "Mcl1")
-    species <- c("Human", "Human", "Mouse", "Rat")
-    mir2tar_demo <- data.frame(miRNA = miRNA, miRNA_mature = miRNA_mature, target_gene = target_gene, species = species, stringsAsFactors = FALSE)
-    return(mir2tar_demo)
+  return(head(mir2tar))
 }

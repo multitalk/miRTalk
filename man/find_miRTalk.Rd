@@ -11,7 +11,6 @@ find_miRTalk(
   pvalue = 0.05,
   per_num = 1000,
   if_filter_miRNA = FALSE,
-  if_consider_condition = TRUE,
   if_doParallel = TRUE,
   use_n_cores = 4
 )
@@ -26,8 +25,6 @@ find_miRTalk(
 \item{pvalue}{Cutoff of p value. Default is \code{0.05}}
 
 \item{if_filter_miRNA}{Whether to filter the significantly highly expressed miRNAs. Default is FALSE}
-
-\item{if_consider_condition}{Whether to infer for each condition. Default is TRUE}
 
 \item{if_doParallel}{Use doParallel. Default is TRUE}
 

@@ -24,7 +24,7 @@ find_miRNA(
 
 \item{mir_info}{A data.frame of the system data containing information of EV-derived miRNA of \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir_info}}}
 
-\item{mir2tar}{A data.frame of the system data containing relationship of miRNA and its target genes for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir2tar}}}
+\item{mir2tar}{A data.frame of the system data containing miRNA-target interactions for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir2tar}}}
 
 \item{min_percent}{Min percent of expressed cells for target genes of miRNA. Default is \code{0.05}}
 

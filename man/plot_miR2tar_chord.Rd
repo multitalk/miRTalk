@@ -40,8 +40,6 @@ plot_miR2tar_chord(
 \item{y_scale}{y_scale to adjust the text. Default is \code{1}}
 
 \item{...}{parameters pass to \code{\link[circlize]{chordDiagram}}, e.g., link.arr.width, link.arr.length, link.arr.col}
-
-\item{show_type}{which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}}
 }
 \value{
 Chord plot of EV-derived miRNAs and target genes

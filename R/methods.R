@@ -135,7 +135,7 @@ find_hvtg <- function(object, pvalue = 0.05, log2fc = 0.5, min_cell_num = 10, nf
 #' @description Find expressed miRNAs among all cells and generate background distribution for permutation test
 #' @param object miRTalk object after \code{\link{create_miRTalk}}
 #' @param mir_info A data.frame of the system data containing information of EV-derived miRNA of \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir_info}}
-#' @param mir2tar A data.frame of the system data containing relationship of miRNA and its target genes for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir2tar}}
+#' @param mir2tar A data.frame of the system data containing miRNA-target interactions for \code{'Human'}, \code{'Mouse'} or \code{'Rat'}. see \code{\link{demo_mir2tar}}
 #' @param min_percent Min percent of expressed cells for target genes of miRNA. Default is \code{0.05}
 #' @param database Which database of miRNA-target interactions to use, "miRTarBase" and/or "TarBase". Default is the "miRTarBase". It can also be "TarBase" or c("miRTarBase", "TarBase")
 #' @param resolution Correct to precursor or mature miRNAs. Use 'precursor' or 'mature'. Default is \code{'mature'}
@@ -253,7 +253,6 @@ find_miRNA <- function(object, mir_info, mir2tar, min_percent = 0.05, database =
 #' @param min_percent Min percent of expressed cells for target genes of miRNA. Default is \code{0.05}
 #' @param pvalue Cutoff of p value. Default is \code{0.05}
 #' @param if_filter_miRNA Whether to filter the significantly highly expressed miRNAs. Default is FALSE
-#' @param if_consider_condition Whether to infer for each condition. Default is TRUE
 #' @param if_doParallel Use doParallel. Default is TRUE
 #' @param use_n_cores Number of CPU cores to use. Default is 4
 #' @return miRTalk object containing the inferred cell-cell communications mediated by EV-derived miRNAs
@@ -262,7 +261,7 @@ find_miRNA <- function(object, mir_info, mir2tar, min_percent = 0.05, database =
 #' @importFrom correlation correlation
 #' @export
 
-find_miRTalk <- function(object, min_cell_num = 10, min_percent = 0.05, pvalue = 0.05, per_num = 1000, if_filter_miRNA = FALSE, if_consider_condition = TRUE, if_doParallel = TRUE, use_n_cores = 4) {
+find_miRTalk <- function(object, min_cell_num = 10, min_percent = 0.05, pvalue = 0.05, per_num = 1000, if_filter_miRNA = FALSE, if_doParallel = TRUE, use_n_cores = 4) {
     # check input
     if (!is(object, "miRTalk")) {
         stop("Invalid class for object: must be 'miRTalk'!")

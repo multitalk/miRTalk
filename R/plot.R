@@ -928,7 +928,6 @@ plot_miR_bubble <- function(object, condition = NULL, celltype = NULL, miRNA = N
 #' @param miRNA which miRNAs to use. Default is to plot all inferred miRNAs in senders.
 #' @param edge_color Colors for the edges from the sender cell type
 #' @param edge_type Types for the edges from the sender cell type. Default is \code{"circle"}. \code{"big.arrow"} for big arrow, "triangle" for triangle, "ellipse" for ellipse, "curved" for curved. Details see \code{\link[circlize]{chordDiagram}}
-#' @param show_type which type of miRNAs to show,  \code{"prob"} or \code{"score"} for inferred miRNAs-target interactions. Default is \code{"prob"}
 #' @param text_size Size of text labels. Default is \code{0.5}
 #' @param y_scale y_scale to adjust the text. Default is \code{1}
 #' @param ... parameters pass to \code{\link[circlize]{chordDiagram}}, e.g., link.arr.width, link.arr.length, link.arr.col
