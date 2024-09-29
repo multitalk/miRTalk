@@ -101,11 +101,14 @@ An object of class miRTalk
 # Note
 - __miRTalk can be applied to either [single-cell transcriptomic data](https://github.com/multitalk/miRTalk/tree/main/inst/extdata) or [spatial transcriptomic data](https://doi.org/10.1038/s41587-022-01517-6)__
 - __miRTalk allows to infer miRNA-target interactions with [positive regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-positive-regulation). The default is [negative regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-negative-regulation)__
-- __miRTalk allows to use the parallel processing for `find_miRTalk`__
-- __miRTalk allows to [use other deconvolution methods](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-other-deconvolution-methods) followed by the inference of cell-cell communications__
-  - RCTD, Seurat, SPOTlight, deconvSeq, stereoscope, cell2location, or other methods
+- miRTalk allows to use the parallel processing for `find_miRTalk`
+- __miRTalk allows to infer miRNA-target interactions [under different conditions](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-under-different-conditions)__
+- __miRTalk allows to use different databases of miRNA-target interactions__
+  - miRTarBase, TarBase, et al.
 - __miRTalk allows to [directly infer cell-cell communications skiping deconvolution](https://github.com/ZJUFanLab/SpaTalk/wiki/Directly-infer-cell-cell-communication-skiping-deconvolution)__
-- __miRTalk can visualize [cell-type compositions (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-types) and [cell-cell communications (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-cell-communications)__
+- __miRTalk can provide [analysis of specifity for a given receiver cell type](https://github.com/multitalk/miRTalk/wiki/Analysis-of-specifity-for-a-given-receiver-cell-type)__
+- __miRTalk can provide [analysis of functional annotations for a miRNA and its target gene](https://github.com/multitalk/miRTalk/wiki/Analysis-of-functional-annotations-for-a-miRNA-and-its-target-gene)__
+- __miRTalk can provide [analysis of potential of circulating miRNAs and organ-organ communication](https://github.com/multitalk/miRTalk/wiki/Analysis-of-potential-of-circulating-miRNAs-and-organ%E2%80%90organ-communication)__
 - miRTalkDB can be download at[`data/`](https://github.com/multitalk/miRTalk/tree/main/data) 
 - Demo data can be download at[`inst/extdata/`](https://github.com/multitalk/miRTalk/tree/main/inst/extdata)
 
