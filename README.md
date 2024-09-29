@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions/runs/5220129987) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](https://github.com/multitalk/miRTalk/blob/main/data/mir2tar.rda) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html) 
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions/runs/5220129987) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](https://github.com/multitalk/miRTalk/tree/main/data) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html) 
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
@@ -99,15 +99,15 @@ An object of class miRTalk
 ```
 
 # Note
-- __miRTalk can be applied to either [single-cell transcriptomic data]() or [spatial transcriptomic data](https://doi.org/10.1038/s41587-022-01517-6)__
-- __SpaTalk allows to use custom [LRIs(wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-customed-lrpairs), [pathways, and TFs database (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-customed-pathways)__
-- __SpaTalk allows to use the parallel processing for `dec_celltype()`, `dec_cci()`, and `dec_cci_all()`__
-- __SpaTalk allows to [use other deconvolution methods](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-other-deconvolution-methods) followed by the inference of cell-cell communications__
+- __miRTalk can be applied to either [single-cell transcriptomic data](https://github.com/multitalk/miRTalk/tree/main/inst/extdata) or [spatial transcriptomic data](https://doi.org/10.1038/s41587-022-01517-6)__
+- __miRTalk allows to infer miRNA-target interactions with [positive regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-positive-regulation). The default is [negative regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-negative-regulation)__
+- __miRTalk allows to use the parallel processing for `find_miRTalk`__
+- __miRTalk allows to [use other deconvolution methods](https://github.com/ZJUFanLab/SpaTalk/wiki/Use-other-deconvolution-methods) followed by the inference of cell-cell communications__
   - RCTD, Seurat, SPOTlight, deconvSeq, stereoscope, cell2location, or other methods
-- __SpaTalk allows to [directly infer cell-cell communications skiping deconvolution](https://github.com/ZJUFanLab/SpaTalk/wiki/Directly-infer-cell-cell-communication-skiping-deconvolution)__
-- __SpaTalk can visualize [cell-type compositions (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-types) and [cell-cell communications (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-cell-communications)__
-- LRIs and pathways can be download at[`data/`](https://github.com/ZJUFanLab/SpaTalk/tree/main/data) 
-- Demo data can be download at[`inst/extdata/`](https://github.com/ZJUFanLab/SpaTalk/tree/main/inst/extdata)
+- __miRTalk allows to [directly infer cell-cell communications skiping deconvolution](https://github.com/ZJUFanLab/SpaTalk/wiki/Directly-infer-cell-cell-communication-skiping-deconvolution)__
+- __miRTalk can visualize [cell-type compositions (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-types) and [cell-cell communications (wiki)](https://github.com/ZJUFanLab/SpaTalk/wiki#visulization-cell-cell-communications)__
+- miRTalkDB can be download at[`data/`](https://github.com/multitalk/miRTalk/tree/main/data) 
+- Demo data can be download at[`inst/extdata/`](https://github.com/multitalk/miRTalk/tree/main/inst/extdata)
 
 __Please refer to the [tutorial vignette](https://raw.githack.com/multitalk/awesome-cell-cell-communication/main/method/tutorial.html) with demo data processing steps. Detailed functions see the [document](https://raw.githack.com/ZJUFanLab/SpaTalk/main/vignettes/SpaTalk.pdf)__
 
