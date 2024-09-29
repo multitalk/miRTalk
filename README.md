@@ -1,5 +1,5 @@
 # miRTalk
-[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions) [![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](https://github.com/multitalk/miRTalk/tree/main/data) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13856217.svg)](https://doi.org/10.5281/zenodo.13856217)
+[![R-CMD-check](https://img.shields.io/badge/R--CMD--check-passing-brightgreen?logo=github)](https://github.com/multitalk/miRTalk/actions)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13856217.svg)](https://doi.org/10.5281/zenodo.13856217)
 
 ### Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data
 
@@ -99,6 +99,8 @@ An object of class miRTalk
 ```
 
 # Note
+[![miRTalkDB](https://img.shields.io/badge/miRTalkDB-v1.0-yellow)](https://github.com/multitalk/miRTalk/tree/main/data) [![miRTalk-tutorial](https://img.shields.io/badge/miRTalk-tutorial-blue)](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html)
+
 - __miRTalk can be applied to either [single-cell transcriptomic data](https://github.com/multitalk/miRTalk/tree/main/inst/extdata) or [spatial transcriptomic data](https://doi.org/10.1038/s41587-022-01517-6)__
 - __miRTalk allows to infer miRNA-target interactions with [positive regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-positive-regulation). The default is [negative regulation](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-negative-regulation)__
 - miRTalk allows to use the parallel processing for `find_miRTalk`
