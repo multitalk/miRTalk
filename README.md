@@ -112,7 +112,7 @@ An object of class miRTalk
 - __miRTalk can provide [analysis of potential of circulating miRNAs and organ-organ communication](https://github.com/multitalk/miRTalk/wiki/Analysis-of-potential-of-circulating-miRNAs-and-organ%E2%80%90organ-communication)__
 - __miRTalkDB can be download at[`data/`](https://github.com/multitalk/miRTalk/tree/main/data)__
 
-__Please refer to the [tutorial vignette](https://raw.githack.com/multitalk/awesome-cell-cell-communication/main/method/tutorial.html) with demo data processing steps. Detailed functions see the [document](https://raw.githack.com/ZJUFanLab/SpaTalk/main/vignettes/SpaTalk.pdf)__
+__Please refer to the [tutorial vignette](https://raw.githack.com/multitalk/awesome-cell-cell-communication/main/method/tutorial.html) with demo data processing steps. Step-by-step procedures can be found under the [wiki page](https://github.com/multitalk/miRTalk/wiki). Detailed functions see the [document](https://raw.githack.com/ZJUFanLab/SpaTalk/main/vignettes/SpaTalk.pdf)__
 
 # About
 miRTalk was developed by Xin Shao. Should you have any questions, please contact Xin Shao at xin_shao@zju.edu.cn
