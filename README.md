@@ -24,7 +24,7 @@ devtools::install_local("/path/to/miRTalk-main.zip")
 ```
 
 # Usage
-miRTalk method consists of three components, wherein the first is to infer the EV-derived miRNA across cells and the highly variable target genes, the second is to infer the cell-cell communication mediated by EV-derived miRNAs and their downstream targets. The third part is to visualize the miRNA-mediated cell-cell communication network and miRNA-target interaction network. Please refer to the __[tutorial vignette](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html)__ with demo data processing steps. Detailed functions see the __[document](https://raw.githack.com/multitalk/miRTalk/main/vignettes/miRTalk.pdf)__.
+miRTalk method consists of three components, wherein the first is to infer the EV-derived miRNA across cells and the highly variable target genes, the second is to infer the cell-cell communication mediated by EV-derived miRNAs and their downstream targets. The third part is to visualize the miRNA-mediated cell-cell communication network and miRNA-target interaction network. Please refer to the __[tutorial vignette](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html)__ with demo data processing steps. Detailed functions see the __[document](https://raw.githack.com/multitalk/miRTalk/main/vignettes/miRTalk.pdf)__.Step-by-step procedures can be found under the [wiki page](https://github.com/multitalk/miRTalk/wiki).
 
 <img src='https://github.com/multitalk/miRTalk/blob/main/img/visualization.png'>
 
