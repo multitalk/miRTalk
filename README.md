@@ -81,7 +81,7 @@ An object of class miRTalk
 ```
 > plot_miRTalk_chord(object = obj)
 > plot_miRTalk_circle(object = obj)
-> plot_miRTalk_circle_simple(object = obj, celltype = "Tumor")
+> plot_miRTalk_circle_simple(object = obj, celltype = "Bcell")
 > plot_miRTalk_heatmap(object = obj)
 > plot_miRTalk_sankey(object = obj)
 > plot_miR_bubble(object = obj)
@@ -96,9 +96,9 @@ An object of class miRTalk
 
 - ### Visualization of miRNA-target interaction network
 ```
-> plot_miR2tar_chord(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
-> plot_miR2tar_circle(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
-> plot_miR2tar_heatmap(object = obj, celltype_sender = "Tumor", celltype_receiver = "Stromal")
+> plot_miR2tar_chord(object = obj, celltype_sender = "Tumor", celltype_receiver = "Bcell")
+> plot_miR2tar_circle(object = obj, celltype_sender = "Tumor", celltype_receiver = "Bcell")
+> plot_miR2tar_heatmap(object = obj, celltype_sender = "Tumor", celltype_receiver = "Bcell")
 ```
 
 # Note
