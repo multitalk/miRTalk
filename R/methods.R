@@ -62,11 +62,7 @@ create_miRTalk <- function(sc_data, sc_celltype, species, condition, if_normaliz
     ver <- packageVersion("Seurat")
     ver <- substr(ver,1,1)
     if (ver >= 5) {
-        genenames <- rownames(sc_data)
-        cellnames <- colnames(sc_data)
-        sc_data <- sc_data[["RNA"]]@layers$data
-        rownames(sc_data) <- genenames
-        colnames(sc_data) <- cellnames
+        sc_data <- sc_data@assays$RNA$data
     } else {
         sc_data <- sc_data[["RNA"]]@data
     }
