@@ -14,7 +14,7 @@ __`evbiog.rda` is a data.frame of the system data containing extracellular vesic
 [21] "SNF8"    "STAM"    "TSG101"  "VPS4A"   "VPS4B"
 ```
 
-__`risc.rda` is a data.frame of the system data containing RNA-induced silencing complex (RISC) related genes__
+__`risc.rda` is a data.frame of the system data containing RNA-induced silencing complex (RISC) related genesfor the inference of MiTIs with negative regulation__
 
 ```
 > load("risc.rda")
@@ -27,6 +27,21 @@ __`risc.rda` is a data.frame of the system data containing RNA-induced silencing
 > risc[risc$species == "Human",]$gene
  [1] "AGO1"     "AGO2"     "AGO3"     "AGO4"     "DICER1"   "HSPA4"    "HSP90AA1" "HSP90AB1" "HSPA8"   
 [10] "HOPX"     "DNAJA2"   "PTGES3"
+```
+
+__`ritac.rda` is a data.frame of the system data containing RNA-induced transcriptional activation complex (RISC) related genes for the inference of MiTIs with positive regulation__
+
+```
+> load("ritac.rda")
+> str(ritac)
+'data.frame':	45 obs. of  2 variables:
+ $ species: chr  "Human" "Human" "Human" "Human" ...
+ $ gene   : chr  "AGO2" "DHX9" "PAF1" "LEO1" ...
+
+# including "Human", "Mouse", "Rat"
+> ritac[ritac$species == "Human",]$gene
+ [1] "AGO2"    "DHX9"    "PAF1"    "LEO1"    "CTR9"    "CDC73"   "RTF1"    "SKIC8"  
+ [9] "SUPT4H1" "SUPT5H"  "SUPT16H" "SSRP1"   "TCEA1"   "TCEA2"   "TCEA3" 
 ```
 
 __`mir2tar.rda` include two data.frame of the system data containing containing information of EV-derived miRNA and miRNA-target interactions(MiTIs)__
