@@ -35,13 +35,16 @@ miRTalk method consists of three components, wherein the first is to infer the E
 # condition: a character with the same length as the number of cells, e.g., control/disease/treatment, phase 1/2/3, men/women
 # evbiog: a data.frame of the system data containing extracellular vesicle biogenesis genes (GO:0140112)
 # risc: a data.frame of the system data containing RNA-induced silencing complex (RISC) related genes
+# ritac: a data.frame of the system data containing RNA-induced transcriptional activation complex related genes
 # mir_info: 
 # 
 > obj <- create_miRTalk(sc_data = sc_data,
                          sc_celltype = sc_celltype,
                          species = "Human",
                          condition = rep("cancer", length(sc_celltype)),
-                         evbiog = evbiog,risc = risc)
+                         evbiog = evbiog,
+                         risc = risc,
+                         ritac = ritac)
 > obj
 An object of class miRTalk
 0 EV-derived miRNA-target interactions
