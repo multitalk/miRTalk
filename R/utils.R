@@ -167,7 +167,11 @@
     sc_data_tmp1 <- sc_data_tmp[miR2tar_sub$target_gene, ]
     sc_data_tmp2 <- sc_data_tmp1
     if (nrow(miR2tar_sub) == 1) {
-        sc_data_tmp2 <- as.numeric(sc_meta_tmp$risc_score)
+        if (regulation == "negative") {
+            sc_data_tmp2 <- as.numeric(sc_meta_tmp$risc_score)
+        } else {
+            sc_data_tmp2 <- as.numeric(sc_meta_tmp$ritac_score)
+        }
         names(sc_data_tmp2) <- paste0("ev", names(sc_data_tmp2))
         if (regulation == "negative") {
             x1_rank <- rank(-sc_data_tmp1)
@@ -179,7 +183,11 @@
         sc_data_weighted <- t(as.matrix(sc_data_weighted))
         rownames(sc_data_weighted) <- miR2tar_sub$target_gene
     } else {
-        sc_data_tmp2[,] <- rep(sc_meta_tmp$risc_score, each = nrow(sc_data_tmp2))
+        if (regulation == "negative") {
+            sc_data_tmp2[,] <- rep(sc_meta_tmp$risc_score, each = nrow(sc_data_tmp2))
+        } else {
+            sc_data_tmp2[,] <- rep(sc_meta_tmp$ritac_score, each = nrow(sc_data_tmp2))
+        }
         colnames(sc_data_tmp2) <- paste0("ev", colnames(sc_data_tmp2))
         sc_data_tmp12 <- cbind(sc_data_tmp1, sc_data_tmp2)
         sc_data_weighted <- apply(sc_data_tmp12, 1, function(x){

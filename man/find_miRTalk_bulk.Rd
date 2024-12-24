@@ -16,6 +16,7 @@ find_miRTalk_bulk(
   if_use_evbiog_risc = TRUE,
   evbiog = NULL,
   risc = NULL,
+  ritac = NULL,
   score_scale_method = "1",
   target_scale_method = "1",
   database = "miRTarBase",
@@ -47,6 +48,8 @@ find_miRTalk_bulk(
 \item{evbiog}{A data.frame of the system data containing extracellular vesicle biogenesis genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
 
 \item{risc}{A data.frame of the system data containing RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
+
+\item{ritac}{A data.frame of the system data containing RNA-induced transcriptional activation complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
 
 \item{score_scale_method}{Methods for scale the Seurat scores of evbiog and risc signatures, "1" for min max scale used in scRNA-seq data by default, and "2" for rank scale. For small sample size, set it to "2" to reduce the zero scores.}
 

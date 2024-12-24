@@ -8,11 +8,12 @@
 #' @param if_normalize Normalize sc_data with Seurat LogNormalize. Set it \code{FLASE} when sc_data has been normalized.
 #' @param evbiog A data.frame of the system data containing extracellular vesicle biogenesis genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
 #' @param risc A data.frame of the system data containing RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
+#' @param ritac A data.frame of the system data containing RNA-induced transcriptional activation complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
 #' @return miRTalk object
 #' @import Matrix methods Seurat
 #' @export
 
-create_miRTalk <- function(sc_data, sc_celltype, species, condition, if_normalize = TRUE, evbiog, risc) {
+create_miRTalk <- function(sc_data, sc_celltype, species, condition, if_normalize = TRUE, evbiog, risc, ritac) {
     if (is(sc_data, "data.frame")) {
         sc_data <- .get_dgCMatrix(as.matrix(sc_data))
     }
@@ -43,6 +44,7 @@ create_miRTalk <- function(sc_data, sc_celltype, species, condition, if_normaliz
     }
     evbiog_genes <- evbiog[evbiog$species == species, ]$gene
     risc_genes <- risc[risc$species == species, ]$gene
+    ritac_genes <- ritac[ritac$species == species, ]$gene
     sc_celltype_new <- .rename_chr(sc_celltype)
     warning_info <- .show_warning(sc_celltype, sc_celltype_new)
     if (!is.null(warning_info)) {
@@ -56,9 +58,10 @@ create_miRTalk <- function(sc_data, sc_celltype, species, condition, if_normaliz
     if (if_normalize) {
         sc_data <- Seurat::NormalizeData(sc_data,verbose = FALSE)
     }
-    sc_data <- Seurat::AddModuleScore(sc_data, features = list(evbiog = evbiog_genes, risc = risc_genes))
+    sc_data <- Seurat::AddModuleScore(sc_data, features = list(evbiog = evbiog_genes, risc = risc_genes, ritac = ritac_genes))
     sc_meta$evbiog_score <- .minmax_normalize(sc_data@meta.data$Cluster1)
     sc_meta$risc_score <- .minmax_normalize(sc_data@meta.data$Cluster2)
+    sc_meta$ritac_score <- .minmax_normalize(sc_data@meta.data$Cluster3)
     ver <- packageVersion("Seurat")
     ver <- substr(ver,1,1)
     if (ver >= 5) {
@@ -476,6 +479,7 @@ find_miRTalk <- function(object, min_cell_num = 10, min_percent = 0.05, pvalue =
 #' @param if_use_evbiog_risc if considering module score of extracellular vesicle biogenesis genes and RNA-induced silencing complex related genes. Default is TRUE. Consider set it FALSE for the comparion of scores between various conditions.
 #' @param evbiog A data.frame of the system data containing extracellular vesicle biogenesis genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
 #' @param risc A data.frame of the system data containing RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
+#' @param ritac A data.frame of the system data containing RNA-induced transcriptional activation complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
 #' @param score_scale_method Methods for scale the Seurat scores of evbiog and risc signatures, "1" for min max scale used in scRNA-seq data by default, and "2" for rank scale. For small sample size, set it to "2" to reduce the zero scores.
 #' @param target_scale_method Methods for scale the target gene expression, "1" for rank scale used in scRNA-seq data by default, "2" for the scale with values divided by the max value for each sample, "3" for min max scale. For bulk RNA-seq, consider set it to "2" (all values >= 0) or "3" to reduce the significant heterogeneity of samples, especially human samples.
 #' @param database Which database of miRNA-target interactions to use, "miRTarBase" and/or "TarBase". Default is the "miRTarBase". It can also be "TarBase" or c("miRTarBase", "TarBase")
@@ -488,7 +492,7 @@ find_miRTalk <- function(object, min_cell_num = 10, min_percent = 0.05, pvalue =
 #' @export
 
 find_miRTalk_bulk <- function(rna_data, mirna_data, type, resolution = "mature", species,
-    mir_info, mir2tar, if_normalize = TRUE, if_use_evbiog_risc = TRUE, evbiog = NULL, risc = NULL, score_scale_method = "1", target_scale_method = "1",
+    mir_info, mir2tar, if_normalize = TRUE, if_use_evbiog_risc = TRUE, evbiog = NULL, risc = NULL, ritac = NULL, score_scale_method = "1", target_scale_method = "1",
     database = "miRTarBase", regulation = "negative", if_use_human_data = FALSE, if_combine = TRUE, gene2gene = NULL){
     if (is(rna_data, "data.frame")) {
         rna_data <- .get_dgCMatrix(as.matrix(rna_data))
@@ -524,8 +528,12 @@ find_miRTalk_bulk <- function(rna_data, mirna_data, type, resolution = "mature",
         if (is.null(risc)) {
             stop("Please provide the data containing RNA-induced silencing complex related genes!")
         }
+        if (is.null(ritac)) {
+            stop("Please provide the data containing RNA-induced transcriptional activation complex related genes!")
+        }
         evbiog_genes <- evbiog[evbiog$species == species, ]$gene
         risc_genes <- risc[risc$species == species, ]$gene
+        ritac_genes <- ritac[ritac$species == species, ]$gene
     }
     sample_meta <- data.frame(sample = colnames(rna_data), stringsAsFactors = F)
     rna_data <- rna_data[which(rowSums(rna_data) > 0),]
@@ -538,14 +546,16 @@ find_miRTalk_bulk <- function(rna_data, mirna_data, type, resolution = "mature",
         mirna_data <- Seurat::NormalizeData(mirna_data,verbose = FALSE)
     }
     if(if_use_evbiog_risc){
-        rna_data <- Seurat::AddModuleScore(rna_data, features = list(evbiog = evbiog_genes, risc = risc_genes))
+        rna_data <- Seurat::AddModuleScore(rna_data, features = list(evbiog = evbiog_genes, risc = risc_genes, ritac = ritac_genes))
         if (scale_method == "1") {
             sample_meta$evbiog_score <- .minmax_normalize(rna_data$Cluster1)
             sample_meta$risc_score <- .minmax_normalize(rna_data$Cluster2)
+            sample_meta$ritac_score <- .minmax_normalize(rna_data$Cluster3)
         }
         if (scale_method == "2") {
             sample_meta$evbiog_score <- .rank_normalize(rna_data$Cluster1)
             sample_meta$risc_score <- .rank_normalize(rna_data$Cluster2)
+            sample_meta$ritac_score <- .rank_normalize(rna_data$Cluster3)
         }
     }
     ver <- packageVersion("Seurat")
@@ -648,6 +658,7 @@ find_miRTalk_bulk <- function(rna_data, mirna_data, type, resolution = "mature",
     if (if_use_evbiog_risc) {
         evbiog_score <- sample_meta$evbiog_score
         risc_score <- sample_meta$risc_score
+        ritac_score <- sample_meta$ritac_score
     }
     pb <- progress::progress_bar$new(format = "[:bar] Finished::percent time::elapsedfull",
         total = nrow(mir2tar), clear = FALSE, width = 60, complete = "+", incomplete = "-")
@@ -664,7 +675,11 @@ find_miRTalk_bulk <- function(rna_data, mirna_data, type, resolution = "mature",
         }
         targetgene_exp <- rna_target[mir2tar$target_gene[i], ]
         if (if_use_evbiog_risc) {
-            sscore_mir2gene <- evbiog_score*mirname_exp*targetgene_exp*risc_score
+            if (regulation == "negative") {
+                sscore_mir2gene <- evbiog_score*mirname_exp*targetgene_exp*risc_score
+            } else {
+                sscore_mir2gene <- evbiog_score*mirname_exp*targetgene_exp*ritac_score
+            }
         } else {
             sscore_mir2gene <- mirname_exp*targetgene_exp
         }

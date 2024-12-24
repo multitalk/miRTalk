@@ -11,7 +11,8 @@ create_miRTalk(
   condition,
   if_normalize = TRUE,
   evbiog,
-  risc
+  risc,
+  ritac
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ create_miRTalk(
 \item{evbiog}{A data.frame of the system data containing extracellular vesicle biogenesis genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
 
 \item{risc}{A data.frame of the system data containing RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
+
+\item{ritac}{A data.frame of the system data containing RNA-induced transcriptional activation complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.}
 }
 \value{
 miRTalk object

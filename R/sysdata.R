@@ -40,3 +40,9 @@
 #' RNA-induced silencing complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
 #' @source \url{https://doi.org/10.1016/j.molcel.2021.11.026}
 "risc"
+
+#' ritac
+#'
+#' RNA-induced transcriptional activation complex related genes of \code{"Human"}, \code{"Mouse"}, and \code{"Rat"}.
+#' @source \url{https://doi.org/10.1038/cr.2016.22}
+"ritac"
