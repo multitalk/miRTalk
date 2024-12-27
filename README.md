@@ -36,8 +36,9 @@ miRTalk method consists of three components, wherein the first is to infer the E
 # evbiog: a data.frame of the system data containing extracellular vesicle biogenesis genes (GO:0140112)
 # risc: a data.frame of the system data containing RNA-induced silencing complex (RISC) related genes
 # ritac: a data.frame of the system data containing RNA-induced transcriptional activation complex related genes
-# mir_info: 
-# 
+# mir_info: a data.frame containing the priori knowledge of EV-derived miRNAs
+# mir2tar: a data.frame containing the priori knowledge of miRNA-target interactions
+
 > obj <- create_miRTalk(sc_data = sc_data,
                          sc_celltype = sc_celltype,
                          species = "Human",
