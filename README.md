@@ -114,7 +114,7 @@ An object of class miRTalk
 - __miRTalk allows to infer miRNA-target interactions [under different conditions](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-under-different-conditions)__
 - __miRTalk allows to use [different databases of miRNA-target interactions](https://github.com/multitalk/miRTalk/wiki/Inference-with-different-databases-of-miRNA%E2%80%90target-interactions)__
 - __miRTalk allows to infer miRNA-target interactions [with custom data provided by users](https://github.com/multitalk/miRTalk/wiki/Inference-with-custom-data-provided-by-users)__
-  - custom evbiog, risc, mir_data, mir2tar, highly varible genes, gene2path, mir2path
+  - custom evbiog, risc, ritac, mir_data, mir2tar, highly varible genes, gene2path, mir2path
 - __miRTalk allows to infer miRNA-target interactions [with bulk RNA-seq data](https://github.com/multitalk/miRTalk/wiki/Inference-of-miRNA%E2%80%90target-interactions-with-bulk-RNA%E2%80%90seq-data)__
 - __miRTalk allows to [use EXOmotif](https://github.com/multitalk/miRTalk/wiki/Use-EXOmotif-to-refine-miRNA%E2%80%90target-interactions) to refine miRNA-target interactions__
 - __miRTalk allows to [use human data for the inference of mouse and rat data](https://github.com/multitalk/miRTalk/wiki/Use-human-data-for-the-inference-of-mouse-and-rat-data)__
