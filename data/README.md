@@ -29,7 +29,7 @@ __`risc.rda` is a data.frame of the system data containing RNA-induced silencing
 [10] "HOPX"     "DNAJA2"   "PTGES3"
 ```
 
-__`ritac.rda` is a data.frame of the system data containing RNA-induced transcriptional activation complex (RISC) related genes for the inference of MiTIs with positive regulation__
+__`ritac.rda` is a data.frame of the system data containing RNA-induced transcriptional activation complex (RITAC) related genes for the inference of MiTIs with positive regulation__
 
 ```
 > load("ritac.rda")
