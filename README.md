@@ -125,5 +125,5 @@ An object of class miRTalk
 
 __Please refer to the [tutorial vignette](https://raw.githack.com/multitalk/miRTalk/main/vignettes/tutorial.html) with demo data processing steps. Step-by-step procedures can be found under the [wiki page](https://github.com/multitalk/miRTalk/wiki). Detailed functions see the [document](https://raw.githack.com/multitalk/miRTalk/main/vignettes/miRTalk.pdf)__
 
-# About
+# Citation
 Shao X, Yu L, Li C, Qian J, Yang X, Yang H, Liao J, Fan, X, Xu X, Fan X. Extracellular vesicle-derived miRNA-mediated cell-cell communication inference for single-cell transcriptomic data with miRTalk. Genome Biol. 2025 April 14;26:95. doi: [10.1186/s13059-025-03566-x](https://doi.org/10.1186/s13059-025-03566-x).
